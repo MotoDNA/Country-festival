@@ -588,6 +588,7 @@ function keys(){
   return { tour: CONFIG.TOUR_API_KEY || saved.tour || '', kakao: CONFIG.KAKAO_JS_KEY || saved.kakao || '' };
 }
 function imgOrPh(src){ return src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=ph></div>'">` : `<div class="ph"></div>`; }
+function dispTitle(f){ return LANG==='en' ? (f.title.replace(/\s*\([^)]*[\uac00-\ud7a3][^)]*\)/g,'').trim() || f.title) : f.title; }
 const CHEV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
 
 /* ---------- 기간 계산 ---------- */
@@ -754,7 +755,7 @@ function renderHome(){
   else {
     const f=wk[0], st=statusOf(f);
     feat.innerHTML=`<div class="feat" data-id="${esc(f.id)}">${f.img?`<div class="bg" style="background-image:url('${esc(f.img)}')"></div><img class="main" src="${esc(f.img)}" alt="" onerror="this.remove()">`:`<div class="ph"></div>`}<span class="pill glass">${st.txt}</span>${S.pos?`<span class="pill dist">${fmtKm(km(S.pos,f))}</span>`:''}
-      <div class="ov"><div class="eyebrow">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div><div class="t">${esc(f.title)}</div></div></div>`;
+      <div class="ov"><div class="eyebrow">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div><div class="t">${esc(dispTitle(f))}</div></div></div>`;
     if(f.img && !S.demo && window.innerWidth>=700) enhanceHero(f);
     rail.innerHTML = wk.slice(1,13).map(f=>railCard(f)).join('');
     rail.style.display = wk.length>1 ? '' : 'none';
@@ -769,7 +770,7 @@ function renderHome(){
   const soon = S.list.filter(f=>f.start>t && f.start<=lim).sort((a,b)=>a.start.localeCompare(b.start));
   $('#soonRows').innerHTML = soon.length ? soon.slice(0,10).map(f=>{
     const d=parseYmd(f.start);
-    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${T().rowDate(d)}</small></div><div class="im">${imgOrPh(f.tiny)}</div><div class="tx"><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
+    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${T().rowDate(d)}</small></div><div class="im">${imgOrPh(f.tiny)}</div><div class="tx"><div class="t">${esc(dispTitle(f))}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
   }).join('') : `<div class="empty">${T().emptySoon}</div>`;
 
   const upcoming = S.list.filter(f=>f.end>=t);
@@ -799,7 +800,7 @@ async function enhanceHero(f){
 }
 function railCard(f, cls='', label){
   const st=statusOf(f);
-  return `<div class="rc ${cls}" data-id="${esc(f.id)}"><div class="im">${imgOrPh(f.thumb)}<span class="pill">${label||st.txt}</span></div><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div>`;
+  return `<div class="rc ${cls}" data-id="${esc(f.id)}"><div class="im">${imgOrPh(f.thumb)}<span class="pill">${label||st.txt}</span></div><div class="t">${esc(dispTitle(f))}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div>`;
 }
 function shortAddr(f){
   if(!f.addr) return areaName(f.area);
@@ -814,7 +815,7 @@ function card(f, dist){
   const st=statusOf(f);
   return `<div class="card" data-id="${esc(f.id)}">
     <div class="thumb">${imgOrPh(f.thumb)}<span class="pill">${st.txt}</span>${dist!=null?`<span class="pill dist">${fmtKm(dist)}</span>`:''}</div>
-    <div class="cbody"><div class="ctitle">${esc(f.title)}</div><div class="cmeta">${fmtRangeShort(f)}</div><div class="cmeta">${esc(shortAddr(f))}</div></div>
+    <div class="cbody"><div class="ctitle">${esc(dispTitle(f))}</div><div class="cmeta">${fmtRangeShort(f)}</div><div class="cmeta">${esc(shortAddr(f))}</div></div>
   </div>`;
 }
 function grid(list, dists){
@@ -840,7 +841,7 @@ function renderCalendar(){
     const fs = dayList(base, k);
     const n = fs.length;
     const cls=['day', d.getMonth()!==mo?'other':'', k===tday?'today':'', S.selDay===k?'sel':''].join(' ');
-    const titles = fs.slice(0,3).map(f=>`<div class="t${f.start===k?' new':''}">${esc(f.title)}</div>`).join('') + (n>3?`<div class="t more">${T().plus(n-3)}</div>`:'');
+    const titles = fs.slice(0,3).map(f=>`<div class="t${f.start===k?' new':''}">${esc(dispTitle(f))}</div>`).join('') + (n>3?`<div class="t more">${T().plus(n-3)}</div>`:'');
     html+=`<div class="${cls}" data-day="${k}"><span class="n">${d.getDate()}</span><span class="cnt">${n?T().cnt(n):''}</span><div class="tt">${titles}</div></div>`;
   }
   $('#cal').innerHTML=html;
