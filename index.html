@@ -68,7 +68,9 @@
   /* ---------- hero (featured) ---------- */
   .feat{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;background:var(--fill2);cursor:pointer;box-shadow:var(--shadow)}
   @media (min-width:700px){ .feat{aspect-ratio:16/8} }
-  .feat img{width:100%;height:100%;object-fit:cover}
+  .feat .bg{position:absolute;inset:-24px;background-size:cover;background-position:center;filter:blur(28px) saturate(1.15);opacity:.55;transform:scale(1.1)}
+  .feat img.main{position:relative;width:100%;height:100%;object-fit:contain}
+  .feat img.main.cover{object-fit:cover}
   .feat .ph{width:100%;height:100%;background:linear-gradient(160deg,#e9eef7,#d9dfeb)}
   .feat .ov{position:absolute;inset:auto 0 0 0;padding:120px 20px 22px;background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,.25) 45%,transparent);color:#fff}
   .feat .eyebrow{font-size:12px;font-weight:500;letter-spacing:.2px;opacity:.85;margin-bottom:6px}
@@ -338,17 +340,18 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="config.js"></script>
 <script>
 /* =========================================================
-   설정 — 사이트를 공개할 때 여기에 키를 적어두면 됩니다.
-   비워두면 화면의 설정에서 입력한 키(이 브라우저에만 저장)를 씁니다.
+   설정 — API 키는 같은 폴더의 config.js 에 적습니다 (이 파일은 건드리지 않아도 됨).
+   config.js 가 없으면 화면의 설정에서 입력한 키(이 브라우저에만 저장)를 씁니다.
    ========================================================= */
-const CONFIG = {
-  TOUR_API_KEY: '00c5948b2d97409420332c2468742b006bee539754940bb003e6406c8b2754dd',      // 공공데이터포털 일반 인증키
-  KAKAO_JS_KEY: '6483ef287ab90e427ef9e38f250a7ee7',      // 카카오맵 JavaScript 키
+const CONFIG = Object.assign({
+  TOUR_API_KEY: '',      // 공공데이터포털 일반 인증키  → config.js 에 적습니다
+  KAKAO_JS_KEY: '',      // 카카오맵 JavaScript 키     → config.js 에 적습니다
   APP_NAME: 'FestivalCalendar',
   CACHE_HOURS: 6         // 같은 데이터를 몇 시간 동안 재사용할지 (API 호출 절약)
-};
+}, window.FESTIVAL_CONFIG || {});
 
 /* ---------- 지역 코드 (TourAPI areaCode) ---------- */
 const AREAS = [
@@ -506,8 +509,9 @@ function norm(x){
     addr: [x.addr1, x.addr2].filter(Boolean).join(' ').trim(),
     start: String(x.eventstartdate||''), end: String(x.eventenddate||x.eventstartdate||''),
     lat: parseFloat(x.mapy)||0, lng: parseFloat(x.mapx)||0,
-    img: x.firstimage || x.firstimage2 || '',      // 큰 사진
-    thumb: x.firstimage2 || x.firstimage || '',    // 작은 사진 (목록용)
+    img: x.firstimage || x.firstimage2 || '',      // 큰 사진 (최대 940px) — 카드에도 이걸 씀 (firstimage2는 300px라 흐림)
+    thumb: x.firstimage || x.firstimage2 || '',
+    tiny: x.firstimage2 || x.firstimage || '',     // 56px 목록용
     tel: (x.tel||'').trim(),
     area: String(x.areacode||''), sigungu: String(x.sigungucode||''),
     mod: String(x.modifiedtime||'')
@@ -517,7 +521,7 @@ function norm(x){
 /* ---------- 샘플 데이터 (키 발급 전 미리보기용) ---------- */
 function loadDemo(){
   const t=today();
-  const mk=(n,i,area,lat,lng,ds,de)=>({id:'demo'+i,title:`(샘플) ${n}`,addr:`${AREA_NAME[area]} 어딘가 · 예시 주소`,start:ymd(addDays(t,ds)),end:ymd(addDays(t,de)),lat,lng,img:'',thumb:'',tel:'',area,sigungu:'',mod:''});
+  const mk=(n,i,area,lat,lng,ds,de)=>({id:'demo'+i,title:`(샘플) ${n}`,addr:`${AREA_NAME[area]} 어딘가 · 예시 주소`,start:ymd(addDays(t,ds)),end:ymd(addDays(t,de)),lat,lng,img:'',thumb:'',tiny:'',tel:'',area,sigungu:'',mod:''});
   S.list=[
     mk('한강 불꽃 페스티벌',1,'1',37.5283,126.9326,1,2),
     mk('송도 바다 음악제',2,'2',37.3894,126.6392,-3,4),
@@ -553,8 +557,9 @@ function renderHome(){
   if(!wk.length){ feat.innerHTML=`<div class="rows"><div class="empty">이번 주말 등록된 축제가 없어요</div></div>`; rail.innerHTML=''; }
   else {
     const f=wk[0], st=statusOf(f);
-    feat.innerHTML=`<div class="feat" data-id="${esc(f.id)}">${imgOrPh(f.img)}<span class="pill glass">${st.txt}</span>${S.pos?`<span class="pill dist">${fmtKm(km(S.pos,f))}</span>`:''}
+    feat.innerHTML=`<div class="feat" data-id="${esc(f.id)}">${f.img?`<div class="bg" style="background-image:url('${esc(f.img)}')"></div><img class="main" src="${esc(f.img)}" alt="" onerror="this.remove()">`:`<div class="ph"></div>`}<span class="pill glass">${st.txt}</span>${S.pos?`<span class="pill dist">${fmtKm(km(S.pos,f))}</span>`:''}
       <div class="ov"><div class="eyebrow">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div><div class="t">${esc(f.title)}</div></div></div>`;
+    if(f.img && !S.demo && window.innerWidth>=700) enhanceHero(f);
     rail.innerHTML = wk.slice(1,13).map(f=>railCard(f)).join('');
     rail.style.display = wk.length>1 ? '' : 'none';
   }
@@ -568,11 +573,33 @@ function renderHome(){
   const soon = S.list.filter(f=>f.start>t && f.start<=lim).sort((a,b)=>a.start.localeCompare(b.start));
   $('#soonRows').innerHTML = soon.length ? soon.slice(0,10).map(f=>{
     const d=parseYmd(f.start);
-    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${d.getMonth()+1}월 ${DOW[d.getDay()]}</small></div><div class="im">${imgOrPh(f.thumb)}</div><div class="tx"><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
+    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${d.getMonth()+1}월 ${DOW[d.getDay()]}</small></div><div class="im">${imgOrPh(f.tiny)}</div><div class="tx"><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
   }).join('') : `<div class="empty">2주 안에 시작하는 축제가 없어요</div>`;
 
   const upcoming = S.list.filter(f=>f.end>=t);
   $('#areaChips').innerHTML = AREAS.map(a=>{ const n=upcoming.filter(f=>f.area===a.code).length; return n?`<button class="chip" data-area="${a.code}">${a.name}<small>${n}</small></button>`:''; }).join('');
+}
+/* 넓은 화면용: 상세 이미지 중 가로형(배너)이 있으면 대표 사진 대신 씀 — 세로 포스터를 늘리지 않도록 */
+async function enhanceHero(f){
+  let list=null;
+  try{ list=JSON.parse(localStorage.getItem('fc_imgs_'+f.id)||'null'); }catch(e){}
+  if(!list){
+    try{
+      const u=new URL('https://apis.data.go.kr/B551011/KorService2/detailImage2');
+      u.search=new URLSearchParams({serviceKey:keys().tour, MobileOS:'ETC', MobileApp:CONFIG.APP_NAME, _type:'json', contentId:f.id, imageYN:'Y', numOfRows:'8'}).toString();
+      const j=await (await fetch(u)).json();
+      const it=j?.response?.body?.items?.item; list=(it?[].concat(it):[]).map(x=>x.originimgurl).filter(Boolean).slice(0,6);
+      try{ localStorage.setItem('fc_imgs_'+f.id, JSON.stringify(list)); }catch(e){}
+    }catch(e){ return; }
+  }
+  const measure=src=>new Promise(res=>{ const im=new Image(); im.onload=()=>res({src,w:im.naturalWidth,h:im.naturalHeight}); im.onerror=()=>res(null); im.src=src; });
+  const dims=(await Promise.all(list.map(measure))).filter(Boolean);
+  const wide=dims.filter(d=>d.w/d.h>=1.3).sort((a,b)=>b.w-a.w)[0];
+  const el=document.querySelector('.feat[data-id="'+CSS.escape(f.id)+'"]');
+  if(!wide || !el) return;
+  const main=el.querySelector('img.main'), bg=el.querySelector('.bg');
+  if(main){ main.src=wide.src; main.classList.add('cover'); }
+  if(bg){ bg.style.backgroundImage=`url('${wide.src}')`; }
 }
 function railCard(f, cls='', label){
   const st=statusOf(f);
