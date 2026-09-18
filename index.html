@@ -143,7 +143,15 @@
   .day.today .n{background:var(--accent);color:#fff;font-weight:600}
   .day .cnt{font-size:11px;color:var(--ink3);margin-top:2px;display:block;height:14px;font-weight:500}
   .day.sel .cnt{color:var(--accent)}
-  @media (min-width:700px){ .day{min-height:68px} }
+  .day .tt{display:none}
+  @media (min-width:700px){
+    .day{min-height:96px;text-align:left;padding:6px 6px 6px}
+    .day .n{display:inline-block} .day .cnt{display:inline-block;margin:0 0 0 6px;height:auto}
+    .day .tt{display:block;margin-top:4px}
+    .day .t{font-size:11px;line-height:1.35;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 6px;border-radius:6px;background:var(--fill);margin-top:2px}
+    .day .t.new{background:var(--accent-soft);color:var(--accent);font-weight:500}
+    .day .t.more{background:none;color:var(--ink3);padding-left:6px}
+  }
   .daylist h3{font-size:17px;font-weight:600;margin:24px 0 12px;letter-spacing:-.3px}
 
   /* ---------- map ---------- */
@@ -354,25 +362,32 @@ const CONFIG = Object.assign({
 }, window.FESTIVAL_CONFIG || {});
 
 /* ---------- 지역 코드 (TourAPI areaCode) ---------- */
-const AREAS = [
-  {code:'1',  name:'서울', lat:37.5665, lng:126.9780},
-  {code:'2',  name:'인천', lat:37.4563, lng:126.7052},
-  {code:'3',  name:'대전', lat:36.3504, lng:127.3845},
-  {code:'4',  name:'대구', lat:35.8714, lng:128.6014},
-  {code:'5',  name:'광주', lat:35.1595, lng:126.8526},
-  {code:'6',  name:'부산', lat:35.1796, lng:129.0756},
-  {code:'7',  name:'울산', lat:35.5384, lng:129.3114},
-  {code:'8',  name:'세종', lat:36.4800, lng:127.2890},
-  {code:'31', name:'경기', lat:37.4138, lng:127.5183},
-  {code:'32', name:'강원', lat:37.8228, lng:128.1555},
-  {code:'33', name:'충북', lat:36.6357, lng:127.4917},
-  {code:'34', name:'충남', lat:36.5184, lng:126.8000},
-  {code:'35', name:'경북', lat:36.4919, lng:128.8889},
-  {code:'36', name:'경남', lat:35.4606, lng:128.2132},
-  {code:'37', name:'전북', lat:35.7175, lng:127.1530},
-  {code:'38', name:'전남', lat:34.8679, lng:126.9910},
-  {code:'39', name:'제주', lat:33.4996, lng:126.5312},
+const AREAS = [   // 코드 = 법정동 시도코드 앞 2자리 (TourAPI lDongRegnCd)
+  {code:'11', name:'서울',      lat:37.5665, lng:126.9780},
+  {code:'41', name:'경기',      lat:37.4138, lng:127.5183},
+  {code:'28', name:'인천',      lat:37.4563, lng:126.7052},
+  {code:'51', name:'강원',      lat:37.8228, lng:128.1555},
+  {code:'30', name:'대전',      lat:36.3504, lng:127.3845},
+  {code:'36', name:'세종',      lat:36.4800, lng:127.2890},
+  {code:'43', name:'충북',      lat:36.6357, lng:127.4917},
+  {code:'44', name:'충남',      lat:36.5184, lng:126.8000},
+  {code:'27', name:'대구',      lat:35.8714, lng:128.6014},
+  {code:'47', name:'경북',      lat:36.4919, lng:128.8889},
+  {code:'26', name:'부산',      lat:35.1796, lng:129.0756},
+  {code:'31', name:'울산',      lat:35.5384, lng:129.3114},
+  {code:'48', name:'경남',      lat:35.4606, lng:128.2132},
+  {code:'52', name:'전북',      lat:35.7175, lng:127.1530},
+  {code:'12', name:'광주·전남', lat:35.0500, lng:126.9000},
+  {code:'50', name:'제주',      lat:33.4996, lng:126.5312},
 ];
+/* 예전 areaCode(1~39) → 새 코드, 주소 앞글자 → 새 코드 (areacode가 비어 오는 항목 대비) */
+const OLD_AREA = {1:'11',2:'28',3:'30',4:'27',5:'12',6:'26',7:'31',8:'36',31:'41',32:'51',33:'43',34:'44',35:'47',36:'48',37:'52',38:'12',39:'50'};
+const ADDR_AREA = [['서울','11'],['부산','26'],['대구','27'],['인천','28'],['광주','12'],['전남','12'],['전라남도','12'],['대전','30'],['울산','31'],['세종','36'],['경기','41'],['강원','51'],['충북','43'],['충청북도','43'],['충남','44'],['충청남도','44'],['경북','47'],['경상북도','47'],['경남','48'],['경상남도','48'],['전북','52'],['전라북도','52'],['제주','50']];
+function areaOf(x){
+  const l=String(x.lDongRegnCd||'').slice(0,2); if(l && AREA_NAME[l]) return l;
+  const o=OLD_AREA[String(x.areacode||'')]; if(o) return o;
+  const addr=String(x.addr1||''); const hit=ADDR_AREA.find(([k])=>addr.startsWith(k)); return hit?hit[1]:'';
+}
 const AREA_NAME = Object.fromEntries(AREAS.map(a=>[a.code,a.name]));
 
 /* ---------- 상태 ---------- */
@@ -453,7 +468,7 @@ async function loadFestivals(force=false){
   if(!k.tour){ showBanner('setup'); setStatus('API 키가 없어요.', ''); return; }
   if(!force){
     try{
-      const c = JSON.parse(localStorage.getItem('fc_cache')||'null');
+      const c = JSON.parse(localStorage.getItem('fc_cache_v2')||'null');
       if(c && Date.now()-c.at < CONFIG.CACHE_HOURS*3600e3 && c.from===ymd(startOfMonth(today()))){
         S.list=c.items; S.demo=false; hideBanner();
         setStatus(`축제 ${S.list.length}개`, `${new Date(c.at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 기준 · 관광공사 최근 수정 ${latestMod()}`);
@@ -491,7 +506,7 @@ async function loadFestivals(force=false){
   }
   S.list = items.filter(f=>f.start && f.end);
   S.demo=false; hideBanner();
-  try{ localStorage.setItem('fc_cache', JSON.stringify({at:Date.now(), from, items:S.list})); }catch(e){}
+  try{ localStorage.setItem('fc_cache_v2', JSON.stringify({at:Date.now(), from, items:S.list})); }catch(e){}
   setStatus(`축제 ${S.list.length}개`, `방금 업데이트 · 관광공사 최근 수정 ${latestMod()}`);
   renderAll();
 }
@@ -513,7 +528,7 @@ function norm(x){
     thumb: x.firstimage || x.firstimage2 || '',
     tiny: x.firstimage2 || x.firstimage || '',     // 56px 목록용
     tel: (x.tel||'').trim(),
-    area: String(x.areacode||''), sigungu: String(x.sigungucode||''),
+    area: areaOf(x), sigungu: String(x.sigungucode||''),
     mod: String(x.modifiedtime||'')
   };
 }
@@ -523,16 +538,16 @@ function loadDemo(){
   const t=today();
   const mk=(n,i,area,lat,lng,ds,de)=>({id:'demo'+i,title:`(샘플) ${n}`,addr:`${AREA_NAME[area]} 어딘가 · 예시 주소`,start:ymd(addDays(t,ds)),end:ymd(addDays(t,de)),lat,lng,img:'',thumb:'',tiny:'',tel:'',area,sigungu:'',mod:''});
   S.list=[
-    mk('한강 불꽃 페스티벌',1,'1',37.5283,126.9326,1,2),
-    mk('송도 바다 음악제',2,'2',37.3894,126.6392,-3,4),
-    mk('춘천 막국수 축제',3,'32',37.8813,127.7298,5,9),
-    mk('보령 머드 페스타',4,'34',36.3161,126.5089,12,18),
-    mk('전주 한옥마을 야행',5,'37',35.8150,127.1530,0,3),
-    mk('부산 자갈치 축제',6,'6',35.0966,129.0306,2,4),
-    mk('경주 벚꽃 마라톤',7,'35',35.8562,129.2247,20,20),
-    mk('제주 들불 축제',8,'39',33.3617,126.3573,30,32),
-    mk('대구 치맥 페스티벌',9,'4',35.8580,128.5910,8,11),
-    mk('여수 밤바다 낭만 버스킹',10,'38',34.7415,127.7360,-10,-2),
+    mk('한강 불꽃 페스티벌',1,'11',37.5283,126.9326,1,2),
+    mk('송도 바다 음악제',2,'28',37.3894,126.6392,-3,4),
+    mk('춘천 막국수 축제',3,'51',37.8813,127.7298,5,9),
+    mk('보령 머드 페스타',4,'44',36.3161,126.5089,12,18),
+    mk('전주 한옥마을 야행',5,'52',35.8150,127.1530,0,3),
+    mk('부산 자갈치 축제',6,'26',35.0966,129.0306,2,4),
+    mk('경주 벚꽃 마라톤',7,'47',35.8562,129.2247,20,20),
+    mk('제주 들불 축제',8,'50',33.3617,126.3573,30,32),
+    mk('대구 치맥 페스티벌',9,'27',35.8580,128.5910,8,11),
+    mk('여수 밤바다 낭만 버스킹',10,'12',34.7415,127.7360,-10,-2),
   ];
   S.demo=true; hideBanner();
   setStatus('샘플 데이터 10개 (실제 축제가 아니에요)', '키를 넣으면 실제 데이터로 바뀝니다');
@@ -637,21 +652,28 @@ function renderCalendar(){
   for(let i=0;i<42;i++){
     const d=addDays(gridStart,i), k=ymd(d);
     if(i>=35 && d.getMonth()!==mo) break;
-    const n = base.filter(f=>f.start<=k && f.end>=k).length;
+    const fs = dayList(base, k);
+    const n = fs.length;
     const cls=['day', d.getMonth()!==mo?'other':'', k===tday?'today':'', S.selDay===k?'sel':''].join(' ');
-    html+=`<div class="${cls}" data-day="${k}"><span class="n">${d.getDate()}</span><span class="cnt">${n||''}</span></div>`;
+    const titles = fs.slice(0,3).map(f=>`<div class="t${f.start===k?' new':''}">${esc(f.title)}</div>`).join('') + (n>3?`<div class="t more">+${n-3}</div>`:'');
+    html+=`<div class="${cls}" data-day="${k}"><span class="n">${d.getDate()}</span><span class="cnt">${n?n+'개':''}</span><div class="tt">${titles}</div></div>`;
   }
   $('#cal').innerHTML=html;
   const dl=$('#daylist');
   if(S.selDay){
     const d=parseYmd(S.selDay);
-    const fs = base.filter(f=>f.start<=S.selDay && f.end>=S.selDay);
+    const fs = dayList(base, S.selDay);
     dl.innerHTML=`<h3>${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[d.getDay()]}요일 <small style="color:var(--ink3);font-weight:400">${fs.length}개</small></h3><div class="grid">${grid(fs)}</div>`;
   } else {
     const fs = filtered();
     const areaTxt = $('#fArea').value ? AREA_NAME[$('#fArea').value]+' ' : '';
     dl.innerHTML=`<h3>${areaTxt}${periodLabel()} <small style="color:var(--ink3);font-weight:400">${fs.length}개</small></h3><div class="grid">${grid(fs.slice(0,60))}</div>${fs.length>60?`<div class="empty">외 ${fs.length-60}개 — 날짜를 눌러 좁혀보세요</div>`:''}`;
   }
+}
+/* 그날 열리는 축제 — 그날 시작하는 것 → 기간 짧은 것 순 (몇 달짜리 전시는 뒤로) */
+function dayList(base, k){
+  const days=f=>(parseYmd(f.end)-parseYmd(f.start))/86400000;
+  return base.filter(f=>f.start<=k && f.end>=k).sort((a,b)=> (b.start===k)-(a.start===k) || days(a)-days(b) || a.start.localeCompare(b.start));
 }
 function periodLabel(){ return $('#fPeriod').options[$('#fPeriod').selectedIndex].text; }
 $('#cal').addEventListener('click', e=>{
@@ -788,7 +810,7 @@ $('#sClose').onclick=()=>$('#settings').classList.remove('on');
 $('#settings').addEventListener('click',e=>{ if(e.target.id==='settings') $('#settings').classList.remove('on'); });
 $('#sSave').onclick=()=>{
   const tour=$('#inTour').value.trim(), kakao=$('#inKakao').value.trim();
-  try{ localStorage.setItem('fc_keys', JSON.stringify({tour,kakao})); localStorage.removeItem('fc_cache'); }catch(e){}
+  try{ localStorage.setItem('fc_keys', JSON.stringify({tour,kakao})); localStorage.removeItem('fc_cache_v2'); }catch(e){}
   $('#settings').classList.remove('on');
   const s=document.getElementById('kakaoSdk'); if(s){ s.remove(); } S.kakaoReady=false; S.kakaoFailed=false; S.map=null; myMarker=null;
   $('#mapMsg').style.display='flex'; $('#mapMsg').textContent='지도를 준비하는 중…';
@@ -796,7 +818,7 @@ $('#sSave').onclick=()=>{
   if(S.view==='map') ensureKakao();
 };
 $('#sDemo').onclick=()=>{ $('#settings').classList.remove('on'); loadDemo(); };
-$('#btnRefresh').onclick=()=>{ try{ localStorage.removeItem('fc_cache'); }catch(e){} S.demo ? loadDemo() : loadFestivals(true); };
+$('#btnRefresh').onclick=()=>{ try{ localStorage.removeItem('fc_cache_v2'); }catch(e){} S.demo ? loadDemo() : loadFestivals(true); };
 
 /* ---------- 탭/필터 ---------- */
 function go(view){
