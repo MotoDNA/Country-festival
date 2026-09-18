@@ -31,10 +31,11 @@
   .grow{flex:1}
   .ib{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink2)}
   .ib:hover{background:var(--fill)}
+  .ib.lang{width:auto;padding:0 10px;font-size:12px;font-weight:600;letter-spacing:.3px;border-radius:999px;background:var(--fill)}
   .filters{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
   .filters::-webkit-scrollbar{display:none}
   .filters select,.filters input{border:none;background:var(--fill);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:500;color:var(--ink);min-width:0;appearance:none;-webkit-appearance:none;outline:none}
-  .filters select{padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+  .filters select{flex:0 0 auto;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
   .filters input{flex:1;min-width:160px;font-weight:400}
   .filters input::placeholder{color:var(--ink3)}
   body[data-view="home"] .filters{display:none}
@@ -99,7 +100,8 @@
   .row{display:flex;gap:14px;align-items:center;padding:12px 16px;cursor:pointer;position:relative}
   .row + .row::before{content:"";position:absolute;left:16px;right:0;top:0;height:1px;background:var(--hair)}
   .row:active{background:var(--fill)}
-  .row .d{flex:0 0 40px;text-align:center}
+  .row .d{flex:0 0 44px;text-align:center}
+  .row .d small{white-space:nowrap}
   .row .d b{display:block;font-size:22px;font-weight:600;line-height:1.1;letter-spacing:-.5px}
   .row .d small{font-size:11px;color:var(--ink3);font-weight:500}
   .row .im{flex:0 0 56px;height:56px;border-radius:10px;overflow:hidden;background:var(--fill2)}
@@ -205,22 +207,23 @@
 <header>
   <div class="wrap">
     <div class="top">
-      <div class="brand">축제 달력<span>전국</span></div>
+      <div class="brand"><span data-i18n="brand">축제 달력</span><span data-i18n="brandSub">전국</span></div>
       <div class="grow"></div>
+      <button class="ib lang" id="btnLang" title="Language">EN</button>
       <button class="ib" id="btnRefresh" title="새로고침"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
       <button class="ib" id="btnSettings" title="설정"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
     <div class="filters">
       <select id="fPeriod">
-        <option value="all">전체 기간</option>
-        <option value="weekend">이번 주말</option>
-        <option value="week">이번 주</option>
-        <option value="month">이번 달</option>
-        <option value="nextmonth">다음 달</option>
-        <option value="live">지금 진행 중</option>
+        <option value="all" data-i18n="pAll">전체 기간</option>
+        <option value="weekend" data-i18n="pWeekend">이번 주말</option>
+        <option value="week" data-i18n="pWeek">이번 주</option>
+        <option value="month" data-i18n="pMonth">이번 달</option>
+        <option value="nextmonth" data-i18n="pNext">다음 달</option>
+        <option value="live" data-i18n="pLive">지금 진행 중</option>
       </select>
-      <select id="fArea"><option value="">전국</option></select>
-      <input id="fQ" type="search" placeholder="축제 이름, 지역 검색">
+      <select id="fArea"><option value="" data-i18n="allRegions">전국</option></select>
+      <input id="fQ" type="search" placeholder="축제 이름, 지역 검색" data-i18n-ph="searchPh">
     </div>
   </div>
 </header>
@@ -232,20 +235,20 @@
   <!-- 홈 -->
   <section class="view on" id="view-home">
     <div class="sec">
-      <div class="sh"><h2>이번 주말</h2><small id="wkLabel"></small><button class="more" data-go="calendar" data-period="weekend">모두 보기</button></div>
+      <div class="sh"><h2 data-i18n="secWeekend">이번 주말</h2><small id="wkLabel"></small><button class="more" data-go="calendar" data-period="weekend" data-i18n="seeAll">모두 보기</button></div>
       <div id="feat"></div>
       <div class="rail" id="wkRail" style="margin-top:14px"></div>
     </div>
     <div class="sec">
-      <div class="sh"><h2>지금 진행 중</h2><small id="liveCnt"></small><button class="more" data-go="calendar" data-period="live">모두 보기</button></div>
+      <div class="sh"><h2 data-i18n="secLive">지금 진행 중</h2><small id="liveCnt"></small><button class="more" data-go="calendar" data-period="live" data-i18n="seeAll">모두 보기</button></div>
       <div class="rail" id="liveRail"></div>
     </div>
     <div class="sec">
-      <div class="sh"><h2>곧 시작</h2><small>2주 안에</small><button class="more" data-go="calendar" data-period="all">모두 보기</button></div>
+      <div class="sh"><h2 data-i18n="secSoon">곧 시작</h2><small data-i18n="secSoonSub">2주 안에</small><button class="more" data-go="calendar" data-period="all" data-i18n="seeAll">모두 보기</button></div>
       <div class="rows" id="soonRows"></div>
     </div>
     <div class="sec">
-      <div class="sh"><h2>지역</h2></div>
+      <div class="sh"><h2 data-i18n="secRegions">지역</h2></div>
       <div class="chips" id="areaChips"></div>
     </div>
   </section>
@@ -254,7 +257,7 @@
   <section class="view" id="view-calendar">
     <div class="calhead">
       <h2 id="calTitle"></h2>
-      <button class="today" id="calToday">오늘</button>
+      <button class="today" id="calToday" data-i18n="today">오늘</button>
       <button class="ib" id="calPrev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
       <button class="ib" id="calNext"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
@@ -265,8 +268,8 @@
   <!-- 지도 -->
   <section class="view" id="view-map">
     <div class="mapbar">
-      <button class="btn ghost sm" id="mapMe">내 위치</button>
-      <button class="btn ghost sm" id="mapKorea">전국</button>
+      <button class="btn ghost sm" id="mapMe" data-i18n="myLoc">내 위치</button>
+      <button class="btn ghost sm" id="mapKorea" data-i18n="allKorea">전국</button>
       <span class="cnt" id="mapCnt"></span>
     </div>
     <div id="map"><div class="mapmsg" id="mapMsg">지도를 준비하는 중…</div></div>
@@ -275,27 +278,27 @@
   <!-- 내 주변 -->
   <section class="view" id="view-nearby">
     <div class="nearbar">
-      <button class="btn sm" id="nearMe">내 위치 찾기</button>
-      <select id="nearCity"><option value="">도시 선택</option></select>
+      <button class="btn sm" id="nearMe" data-i18n="useMyLoc">내 위치 찾기</button>
+      <select id="nearCity"><option value="" data-i18n="chooseCity">도시 선택</option></select>
       <select id="nearRadius">
         <option value="30">30km</option>
         <option value="50">50km</option>
         <option value="100" selected>100km</option>
         <option value="200">200km</option>
       </select>
-      <span class="pos" id="posText">위치를 정하면 가까운 순으로 보여드려요</span>
+      <span class="pos" id="posText" data-i18n="posHint">위치를 정하면 가까운 순으로 보여드려요</span>
     </div>
     <div class="grid" id="nearGrid"></div>
   </section>
 </main>
 
-<footer>데이터 한국관광공사 TourAPI · 지도 카카오맵<br>축제 정보는 주최 측 사정으로 변경될 수 있습니다.</footer>
+<footer data-i18n-html="footer">데이터 한국관광공사 TourAPI · 지도 카카오맵<br>축제 정보는 주최 측 사정으로 변경될 수 있습니다.</footer>
 
 <nav class="nav"><div class="in">
-  <button class="on" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</button>
-  <button data-view="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>달력</button>
-  <button data-view="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>지도</button>
-  <button data-view="nearby"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>내 주변</button>
+  <button class="on" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span data-i18n="navHome">홈</span></button>
+  <button data-view="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i18n="navCal">달력</span></button>
+  <button data-view="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span data-i18n="navMap">지도</span></button>
+  <button data-view="nearby"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-i18n="navNear">내 주변</span></button>
 </div></nav>
 
 <!-- 상세 -->
@@ -361,32 +364,109 @@ const CONFIG = Object.assign({
   CACHE_HOURS: 6         // 같은 데이터를 몇 시간 동안 재사용할지 (API 호출 절약)
 }, window.FESTIVAL_CONFIG || {});
 
+/* ---------- 언어 (ko / en) ---------- */
+const I18N = {
+  ko: {
+    brand:'축제 달력', brandSub:'전국', langBtn:'EN',
+    pAll:'전체 기간', pWeekend:'이번 주말', pWeek:'이번 주', pMonth:'이번 달', pNext:'다음 달', pLive:'지금 진행 중',
+    allRegions:'전국', searchPh:'축제 이름, 지역 검색',
+    secWeekend:'이번 주말', secLive:'지금 진행 중', secSoon:'곧 시작', secSoonSub:'2주 안에', secRegions:'지역', seeAll:'모두 보기',
+    today:'오늘', myLoc:'내 위치', allKorea:'전국', useMyLoc:'내 위치 찾기', chooseCity:'도시 선택', posHint:'위치를 정하면 가까운 순으로 보여드려요',
+    navHome:'홈', navCal:'달력', navMap:'지도', navNear:'내 주변',
+    footer:'데이터 한국관광공사 TourAPI · 지도 카카오맵<br>축제 정보는 주최 측 사정으로 변경될 수 있습니다.',
+    live:'진행 중', ended:'종료', startsToday:'오늘 시작', dminus:n=>`D-${n}`,
+    loading:'한국관광공사에서 축제 정보를 받아오는 중…', loadFail:'불러오기 실패', noKey:'API 키가 없어요.',
+    count:n=>`축제 ${n}개`, justUpdated:'방금 업데이트', asOf:'관광공사 최근 수정', basis:'기준',
+    dow:['일','월','화','수','목','금','토'], monthTitle:(y,m)=>`${y}년 ${m}월`, cnt:n=>`${n}개`, plus:n=>`+${n}`,
+    dayTitle:d=>`${d.getMonth()+1}월 ${d.getDate()}일 ${'일월화수목금토'[d.getDay()]}요일`, items:n=>`${n}개`, more:n=>`외 ${n}개 — 날짜를 눌러 좁혀보세요`,
+    wkLabel:(a,b)=>`${a.getMonth()+1}월 ${a.getDate()}일 – ${b.getDate()}일`, until:d=>`${d}까지`,
+    rowDate:d=>`${d.getMonth()+1}월 ${'일월화수목금토'[d.getDay()]}`,
+    emptyWeekend:'이번 주말 등록된 축제가 없어요', emptyLive:'지금 진행 중인 축제가 없어요', emptySoon:'2주 안에 시작하는 축제가 없어요',
+    emptyList:'조건에 맞는 축제가 없어요.<br>기간이나 지역을 바꿔보세요.', emptyNear:'<b>내 위치 찾기</b>를 누르거나 도시를 고르면<br>가까운 축제부터 보여드려요.',
+    mapCnt:(p,n)=>`${p} · ${n}개`, nearInfo:(l,r,p,n)=>`${l} 기준 ${r}km 안 · ${p} · ${n}개`, locating:'위치 확인 중…', locFail:'위치를 가져오지 못했어요. 도시를 골라주세요.',
+    noGeo:'이 브라우저는 위치 기능을 지원하지 않아요', geoDenied:'위치 권한이 거부됐거나 사용할 수 없어요', curLoc:'현재 위치', fromLoc:(l,k)=>`${l}에서 ${k}`,
+    dDates:'기간', dPlace:'장소', dTel:'문의', openKakao:'카카오맵에서 보기', directions:'길찾기', webSearch:'네이버 검색', openGoogle:'Google 지도', share:'공유',
+    ovLoading:'소개 불러오는 중…', ovNone:'등록된 소개글이 없어요.', ovFail:'소개글을 불러오지 못했어요.', ovDemo:'샘플 데이터라 소개글이 없어요.', homepage:'공식 홈페이지 ›',
+    copied:'복사했어요', copyFail:'복사에 실패했어요', lang:'ko-KR'
+  },
+  en: {
+    brand:'Festival Calendar', brandSub:'Korea', langBtn:'한국어',
+    pAll:'All dates', pWeekend:'This weekend', pWeek:'This week', pMonth:'This month', pNext:'Next month', pLive:'Happening now',
+    allRegions:'All regions', searchPh:'Search festivals or places',
+    secWeekend:'This weekend', secLive:'Happening now', secSoon:'Starting soon', secSoonSub:'within 2 weeks', secRegions:'Regions', seeAll:'See all',
+    today:'Today', myLoc:'My location', allKorea:'All Korea', useMyLoc:'Use my location', chooseCity:'Choose a city', posHint:'Pick a location to sort festivals by distance',
+    navHome:'Home', navCal:'Calendar', navMap:'Map', navNear:'Nearby',
+    footer:'Data: Korea Tourism Organization TourAPI · Map: Kakao (labels in Korean)<br>Festival details may change without notice.',
+    live:'Now on', ended:'Ended', startsToday:'Starts today', dminus:n=>`In ${n} day${n>1?'s':''}`,
+    loading:'Loading festivals from Korea Tourism Organization…', loadFail:'Could not load', noKey:'No API key.',
+    count:n=>`${n} festivals`, justUpdated:'Just updated', asOf:'KTO data as of', basis:'',
+    dow:['S','M','T','W','T','F','S'], monthTitle:(y,m)=>`${MONTHS_EN[m-1]} ${y}`, cnt:n=>`${n}`, plus:n=>`+${n}`,
+    dayTitle:d=>`${DOW_EN[d.getDay()]}, ${MONTHS_EN[d.getMonth()]} ${d.getDate()}`, items:n=>`${n}`, more:n=>`${n} more — tap a date to narrow down`,
+    wkLabel:(a,b)=>`${MONTHS_EN[a.getMonth()]} ${a.getDate()} – ${b.getDate()}`, until:d=>`until ${d}`,
+    rowDate:d=>`${DOW_EN[d.getDay()]} · ${MONTHS_EN[d.getMonth()]}`,
+    emptyWeekend:'No festivals listed for this weekend', emptyLive:'Nothing happening right now', emptySoon:'Nothing starting in the next 2 weeks',
+    emptyList:'No festivals match.<br>Try another date range or region.', emptyNear:'Tap <b>Use my location</b> or choose a city<br>to see the nearest festivals first.',
+    mapCnt:(p,n)=>`${p} · ${n}`, nearInfo:(l,r,p,n)=>`Within ${r} km of ${l} · ${p} · ${n}`, locating:'Locating…', locFail:'Could not get your location. Choose a city instead.',
+    noGeo:'This browser does not support location', geoDenied:'Location permission denied or unavailable', curLoc:'current location', fromLoc:(l,k)=>`${k} from ${l}`,
+    dDates:'Dates', dPlace:'Place', dTel:'Contact', openKakao:'Open in Kakao Map', directions:'Directions', webSearch:'Search on Google', openGoogle:'Google Maps', share:'Share',
+    ovLoading:'Loading description…', ovNone:'No description available.', ovFail:'Could not load the description.', ovDemo:'Sample data — no description.', homepage:'Official website ›',
+    copied:'Copied', copyFail:'Copy failed', lang:'en-US'
+  }
+};
+const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], DOW_EN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function detectLang(){
+  const q=new URLSearchParams(location.search).get('lang'); if(q==='en'||q==='ko') return q;
+  try{ const v=localStorage.getItem('fc_lang'); if(v==='en'||v==='ko') return v; }catch(e){}
+  return /^en/i.test(navigator.language||'') ? 'en' : 'ko';
+}
+let LANG = detectLang();
+const T = () => I18N[LANG];
+const SERVICE = () => LANG==='en' ? 'EngService2' : 'KorService2';
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ const v=T()[el.dataset.i18n]; if(v!=null) el.textContent=v; });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=T()[el.dataset.i18nPh]||''; });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML=T()[el.dataset.i18nHtml]||''; });
+  $('#btnLang').textContent=T().langBtn;
+  document.title=T().brand;
+  // 지역 이름
+  document.querySelectorAll('#fArea option, #nearCity option').forEach(o=>{ const a=AREAS.find(x=>x.code===o.value); if(a) o.textContent=areaName(a.code); });
+}
+function areaName(code){ const a=AREAS.find(x=>x.code===code); return a ? (LANG==='en'?a.en:a.name) : ''; }
+function setLang(l){
+  LANG=l; try{ localStorage.setItem('fc_lang', l); }catch(e){}
+  const u=new URL(location.href); u.searchParams.set('lang', l); history.replaceState(null,'',u);
+  applyLang(); S.selDay=null;
+  S.demo ? loadDemo() : loadFestivals();
+}
+
 /* ---------- 지역 코드 (TourAPI areaCode) ---------- */
 const AREAS = [   // 코드 = 법정동 시도코드 앞 2자리 (TourAPI lDongRegnCd)
-  {code:'11', name:'서울',      lat:37.5665, lng:126.9780},
-  {code:'41', name:'경기',      lat:37.4138, lng:127.5183},
-  {code:'28', name:'인천',      lat:37.4563, lng:126.7052},
-  {code:'51', name:'강원',      lat:37.8228, lng:128.1555},
-  {code:'30', name:'대전',      lat:36.3504, lng:127.3845},
-  {code:'36', name:'세종',      lat:36.4800, lng:127.2890},
-  {code:'43', name:'충북',      lat:36.6357, lng:127.4917},
-  {code:'44', name:'충남',      lat:36.5184, lng:126.8000},
-  {code:'27', name:'대구',      lat:35.8714, lng:128.6014},
-  {code:'47', name:'경북',      lat:36.4919, lng:128.8889},
-  {code:'26', name:'부산',      lat:35.1796, lng:129.0756},
-  {code:'31', name:'울산',      lat:35.5384, lng:129.3114},
-  {code:'48', name:'경남',      lat:35.4606, lng:128.2132},
-  {code:'52', name:'전북',      lat:35.7175, lng:127.1530},
-  {code:'12', name:'광주·전남', lat:35.0500, lng:126.9000},
-  {code:'50', name:'제주',      lat:33.4996, lng:126.5312},
+  {code:'11', name:'서울', en:'Seoul',      lat:37.5665, lng:126.9780},
+  {code:'41', name:'경기', en:'Gyeonggi',      lat:37.4138, lng:127.5183},
+  {code:'28', name:'인천', en:'Incheon',      lat:37.4563, lng:126.7052},
+  {code:'51', name:'강원', en:'Gangwon',      lat:37.8228, lng:128.1555},
+  {code:'30', name:'대전', en:'Daejeon',      lat:36.3504, lng:127.3845},
+  {code:'36', name:'세종', en:'Sejong',      lat:36.4800, lng:127.2890},
+  {code:'43', name:'충북', en:'Chungbuk',      lat:36.6357, lng:127.4917},
+  {code:'44', name:'충남', en:'Chungnam',      lat:36.5184, lng:126.8000},
+  {code:'27', name:'대구', en:'Daegu',      lat:35.8714, lng:128.6014},
+  {code:'47', name:'경북', en:'Gyeongbuk',      lat:36.4919, lng:128.8889},
+  {code:'26', name:'부산', en:'Busan',      lat:35.1796, lng:129.0756},
+  {code:'31', name:'울산', en:'Ulsan',      lat:35.5384, lng:129.3114},
+  {code:'48', name:'경남', en:'Gyeongnam',      lat:35.4606, lng:128.2132},
+  {code:'52', name:'전북', en:'Jeonbuk',      lat:35.7175, lng:127.1530},
+  {code:'12', name:'광주·전남', en:'Gwangju·Jeonnam', lat:35.0500, lng:126.9000},
+  {code:'50', name:'제주', en:'Jeju',      lat:33.4996, lng:126.5312},
 ];
 /* 예전 areaCode(1~39) → 새 코드, 주소 앞글자 → 새 코드 (areacode가 비어 오는 항목 대비) */
 const OLD_AREA = {1:'11',2:'28',3:'30',4:'27',5:'12',6:'26',7:'31',8:'36',31:'41',32:'51',33:'43',34:'44',35:'47',36:'48',37:'52',38:'12',39:'50'};
+const ADDR_AREA_EN = [['Seoul','11'],['Busan','26'],['Daegu','27'],['Incheon','28'],['Gwangju','12'],['Jeollanam','12'],['Jeonnam','12'],['Daejeon','30'],['Ulsan','31'],['Sejong','36'],['Gyeonggi','41'],['Gangwon','51'],['Chungcheongbuk','43'],['Chungbuk','43'],['Chungcheongnam','44'],['Chungnam','44'],['Gyeongsangbuk','47'],['Gyeongbuk','47'],['Gyeongsangnam','48'],['Gyeongnam','48'],['Jeollabuk','52'],['Jeonbuk','52'],['Jeju','50']];
 const ADDR_AREA = [['서울','11'],['부산','26'],['대구','27'],['인천','28'],['광주','12'],['전남','12'],['전라남도','12'],['대전','30'],['울산','31'],['세종','36'],['경기','41'],['강원','51'],['충북','43'],['충청북도','43'],['충남','44'],['충청남도','44'],['경북','47'],['경상북도','47'],['경남','48'],['경상남도','48'],['전북','52'],['전라북도','52'],['제주','50']];
 function areaOf(x){
   const l=String(x.lDongRegnCd||'').slice(0,2); if(l && AREA_NAME[l]) return l;
   const o=OLD_AREA[String(x.areacode||'')]; if(o) return o;
-  const addr=String(x.addr1||''); const hit=ADDR_AREA.find(([k])=>addr.startsWith(k)); return hit?hit[1]:'';
+  const addr=String(x.addr1||''); const hit=ADDR_AREA.find(([k])=>addr.startsWith(k)) || ADDR_AREA_EN.find(([k])=>addr.includes(k)); return hit?hit[1]:'';
 }
 const AREA_NAME = Object.fromEntries(AREAS.map(a=>[a.code,a.name]));
 
@@ -439,10 +519,10 @@ function periodRange(p){
 function overlaps(f, a, b){ return f.start <= ymd(b) && f.end >= ymd(a); }
 function statusOf(f){
   const t=ymd(today());
-  if(f.end < t) return {cls:'off', txt:'종료'};
-  if(f.start <= t) return {cls:'live', txt:'진행 중'};
+  if(f.end < t) return {cls:'off', txt:T().ended};
+  if(f.start <= t) return {cls:'live', txt:T().live};
   const d=Math.round((parseYmd(f.start)-today())/86400000);
-  return {cls:'soon', txt: d===0?'오늘 시작':`D-${d}`};
+  return {cls:'soon', txt: d===0?T().startsToday:T().dminus(d)};
 }
 function byPeriod(p){ const r=periodRange(p); const t=ymd(today()); return S.list.filter(f=> r ? overlaps(f,r[0],r[1]) : f.end>=t); }
 
@@ -465,23 +545,23 @@ function filtered(opts={}){
 /* ---------- 데이터 불러오기 ---------- */
 async function loadFestivals(force=false){
   const k = keys();
-  if(!k.tour){ showBanner('setup'); setStatus('API 키가 없어요.', ''); return; }
+  if(!k.tour){ showBanner('setup'); setStatus(T().noKey, ''); return; }
   if(!force){
     try{
-      const c = JSON.parse(localStorage.getItem('fc_cache_v2')||'null');
+      const c = JSON.parse(localStorage.getItem('fc_cache_v2_'+LANG)||'null');
       if(c && Date.now()-c.at < CONFIG.CACHE_HOURS*3600e3 && c.from===ymd(startOfMonth(today()))){
         S.list=c.items; S.demo=false; hideBanner();
-        setStatus(`축제 ${S.list.length}개`, `${new Date(c.at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 기준 · 관광공사 최근 수정 ${latestMod()}`);
+        setStatus(T().count(S.list.length), `${new Date(c.at).toLocaleTimeString(T().lang,{hour:'2-digit',minute:'2-digit'})} ${T().basis} · ${T().asOf} ${latestMod()}`);
         renderAll(); return;
       }
     }catch(e){}
   }
-  setStatus('한국관광공사에서 축제 정보를 받아오는 중…','');
+  setStatus(T().loading,'');
   const from = ymd(startOfMonth(today()));
   const items=[]; let page=1, total=Infinity;
   try{
     while(items.length < total && page <= 12){
-      const u = new URL('https://apis.data.go.kr/B551011/KorService2/searchFestival2');
+      const u = new URL(`https://apis.data.go.kr/B551011/${SERVICE()}/searchFestival2`);
       u.search = new URLSearchParams({
         serviceKey:k.tour, MobileOS:'ETC', MobileApp:CONFIG.APP_NAME, _type:'json',
         arrange:'C', eventStartDate:from, numOfRows:'500', pageNo:String(page)
@@ -500,21 +580,21 @@ async function loadFestivals(force=false){
     }
   }catch(err){
     showBanner('error', err.message);
-    setStatus('불러오기 실패', '');
+    setStatus(T().loadFail, '');
     if(S.list.length===0) renderAll();
     return;
   }
   S.list = items.filter(f=>f.start && f.end);
   S.demo=false; hideBanner();
-  try{ localStorage.setItem('fc_cache_v2', JSON.stringify({at:Date.now(), from, items:S.list})); }catch(e){}
-  setStatus(`축제 ${S.list.length}개`, `방금 업데이트 · 관광공사 최근 수정 ${latestMod()}`);
+  try{ localStorage.setItem('fc_cache_v2_'+LANG, JSON.stringify({at:Date.now(), from, items:S.list})); }catch(e){}
+  setStatus(T().count(S.list.length), `${T().justUpdated} · ${T().asOf} ${latestMod()}`);
   renderAll();
 }
 function latestMod(){ const m=S.list.reduce((a,f)=>f.mod>a?f.mod:a,''); return m?fmtDate(m):'-'; }
 function explainXml(txt){
   const m = txt.match(/<returnAuthMsg>([^<]+)<\/returnAuthMsg>|<errMsg>([^<]+)<\/errMsg>|<resultMsg>([^<]+)<\/resultMsg>/);
   const msg = m ? (m[1]||m[2]||m[3]) : '';
-  if(/NOT_REGISTERED|UNREGISTERED|KEY/i.test(msg)) return '인증키가 아직 등록되지 않았거나 잘못됐어요. 활용신청 승인 후 "일반 인증키(Decoding)"를 다시 확인해 주세요.';
+  if(/NOT_REGISTERED|UNREGISTERED|KEY/i.test(msg)) return LANG==='en' ? 'The English data service (한국관광공사_영문 관광정보 서비스_GW) is not enabled for this key yet.' : '인증키가 아직 등록되지 않았거나 잘못됐어요. 활용신청 승인 후 "일반 인증키(Decoding)"를 다시 확인해 주세요. (영문 모드라면 영문 관광정보 서비스 활용신청이 필요해요)';
   if(/LIMITED|EXCEEDS/i.test(msg)) return '오늘 API 호출 한도를 넘었어요. 내일 다시 시도하거나 운영계정으로 전환해 주세요.';
   return msg || '응답이 JSON 형식이 아니에요 (키 또는 네트워크 문제일 수 있어요).';
 }
@@ -536,7 +616,7 @@ function norm(x){
 /* ---------- 샘플 데이터 (키 발급 전 미리보기용) ---------- */
 function loadDemo(){
   const t=today();
-  const mk=(n,i,area,lat,lng,ds,de)=>({id:'demo'+i,title:`(샘플) ${n}`,addr:`${AREA_NAME[area]} 어딘가 · 예시 주소`,start:ymd(addDays(t,ds)),end:ymd(addDays(t,de)),lat,lng,img:'',thumb:'',tiny:'',tel:'',area,sigungu:'',mod:''});
+  const mk=(n,i,area,lat,lng,ds,de)=>({id:'demo'+i,title:`${LANG==='en'?'(Sample) ':'(샘플) '}${n}`,addr:`${AREA_NAME[area]} 어딘가 · 예시 주소`,start:ymd(addDays(t,ds)),end:ymd(addDays(t,de)),lat,lng,img:'',thumb:'',tiny:'',tel:'',area,sigungu:'',mod:''});
   S.list=[
     mk('한강 불꽃 페스티벌',1,'11',37.5283,126.9326,1,2),
     mk('송도 바다 음악제',2,'28',37.3894,126.6392,-3,4),
@@ -550,7 +630,7 @@ function loadDemo(){
     mk('여수 밤바다 낭만 버스킹',10,'12',34.7415,127.7360,-10,-2),
   ];
   S.demo=true; hideBanner();
-  setStatus('샘플 데이터 10개 (실제 축제가 아니에요)', '키를 넣으면 실제 데이터로 바뀝니다');
+  setStatus(LANG==='en'?'10 sample items (not real festivals)':'샘플 데이터 10개 (실제 축제가 아니에요)', LANG==='en'?'Add API keys to load real data':'키를 넣으면 실제 데이터로 바뀝니다');
   renderAll();
 }
 
@@ -566,10 +646,10 @@ function setStatus(a,b){ $('#statusText').textContent=a; $('#statusSub').textCon
 /* ---------- 홈 ---------- */
 function renderHome(){
   const [sa,su]=periodRange('weekend');
-  $('#wkLabel').textContent=`${sa.getMonth()+1}월 ${sa.getDate()}일 – ${su.getDate()}일`;
+  $('#wkLabel').textContent=T().wkLabel(sa,su);
   let wk = byPeriod('weekend').slice().sort((a,b)=> (b.img?1:0)-(a.img?1:0) || a.start.localeCompare(b.start));
   const feat=$('#feat'), rail=$('#wkRail');
-  if(!wk.length){ feat.innerHTML=`<div class="rows"><div class="empty">이번 주말 등록된 축제가 없어요</div></div>`; rail.innerHTML=''; }
+  if(!wk.length){ feat.innerHTML=`<div class="rows"><div class="empty">${T().emptyWeekend}</div></div>`; rail.innerHTML=''; }
   else {
     const f=wk[0], st=statusOf(f);
     feat.innerHTML=`<div class="feat" data-id="${esc(f.id)}">${f.img?`<div class="bg" style="background-image:url('${esc(f.img)}')"></div><img class="main" src="${esc(f.img)}" alt="" onerror="this.remove()">`:`<div class="ph"></div>`}<span class="pill glass">${st.txt}</span>${S.pos?`<span class="pill dist">${fmtKm(km(S.pos,f))}</span>`:''}
@@ -580,31 +660,31 @@ function renderHome(){
   }
 
   const live = byPeriod('live').sort((a,b)=>a.end.localeCompare(b.end));
-  $('#liveCnt').textContent=`${live.length}개`;
-  $('#liveRail').innerHTML = live.length ? live.slice(0,20).map(f=>railCard(f,'sq',`${fmtShort(f.end)}까지`)).join('')
-    : `<div class="empty" style="width:100%">지금 진행 중인 축제가 없어요</div>`;
+  $('#liveCnt').textContent=T().cnt(live.length);
+  $('#liveRail').innerHTML = live.length ? live.slice(0,20).map(f=>railCard(f,'sq',T().until(fmtShort(f.end)))).join('')
+    : `<div class="empty" style="width:100%">${T().emptyLive}</div>`;
 
   const t=ymd(today()), lim=ymd(addDays(today(),14));
   const soon = S.list.filter(f=>f.start>t && f.start<=lim).sort((a,b)=>a.start.localeCompare(b.start));
   $('#soonRows').innerHTML = soon.length ? soon.slice(0,10).map(f=>{
     const d=parseYmd(f.start);
-    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${d.getMonth()+1}월 ${DOW[d.getDay()]}</small></div><div class="im">${imgOrPh(f.tiny)}</div><div class="tx"><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
-  }).join('') : `<div class="empty">2주 안에 시작하는 축제가 없어요</div>`;
+    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${T().rowDate(d)}</small></div><div class="im">${imgOrPh(f.tiny)}</div><div class="tx"><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
+  }).join('') : `<div class="empty">${T().emptySoon}</div>`;
 
   const upcoming = S.list.filter(f=>f.end>=t);
-  $('#areaChips').innerHTML = AREAS.map(a=>{ const n=upcoming.filter(f=>f.area===a.code).length; return n?`<button class="chip" data-area="${a.code}">${a.name}<small>${n}</small></button>`:''; }).join('');
+  $('#areaChips').innerHTML = AREAS.map(a=>{ const n=upcoming.filter(f=>f.area===a.code).length; return n?`<button class="chip" data-area="${a.code}">${areaName(a.code)}<small>${n}</small></button>`:''; }).join('');
 }
 /* 넓은 화면용: 상세 이미지 중 가로형(배너)이 있으면 대표 사진 대신 씀 — 세로 포스터를 늘리지 않도록 */
 async function enhanceHero(f){
   let list=null;
-  try{ list=JSON.parse(localStorage.getItem('fc_imgs_'+f.id)||'null'); }catch(e){}
+  try{ list=JSON.parse(localStorage.getItem('fc_imgs_'+LANG+f.id)||'null'); }catch(e){}
   if(!list){
     try{
-      const u=new URL('https://apis.data.go.kr/B551011/KorService2/detailImage2');
+      const u=new URL(`https://apis.data.go.kr/B551011/${SERVICE()}/detailImage2`);
       u.search=new URLSearchParams({serviceKey:keys().tour, MobileOS:'ETC', MobileApp:CONFIG.APP_NAME, _type:'json', contentId:f.id, imageYN:'Y', numOfRows:'8'}).toString();
       const j=await (await fetch(u)).json();
       const it=j?.response?.body?.items?.item; list=(it?[].concat(it):[]).map(x=>x.originimgurl).filter(Boolean).slice(0,6);
-      try{ localStorage.setItem('fc_imgs_'+f.id, JSON.stringify(list)); }catch(e){}
+      try{ localStorage.setItem('fc_imgs_'+LANG+f.id, JSON.stringify(list)); }catch(e){}
     }catch(e){ return; }
   }
   const measure=src=>new Promise(res=>{ const im=new Image(); im.onload=()=>res({src,w:im.naturalWidth,h:im.naturalHeight}); im.onerror=()=>res(null); im.src=src; });
@@ -620,7 +700,11 @@ function railCard(f, cls='', label){
   const st=statusOf(f);
   return `<div class="rc ${cls}" data-id="${esc(f.id)}"><div class="im">${imgOrPh(f.thumb)}<span class="pill">${label||st.txt}</span></div><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div>`;
 }
-function shortAddr(f){ if(!f.addr) return AREA_NAME[f.area]||''; const p=f.addr.split(' '); return p.slice(0,2).join(' ').replace('특별자치도','').replace('특별시','').replace('광역시','').replace('특별자치시',''); }
+function shortAddr(f){
+  if(!f.addr) return areaName(f.area);
+  if(LANG==='en'){ const parts=f.addr.split(',').map(x=>x.trim()).filter(Boolean); return parts.slice(-2).join(', ').replace(/\s*\(.*?\)/g,''); }
+  const p=f.addr.split(' '); return p.slice(0,2).join(' ').replace('특별자치도','').replace('특별시','').replace('광역시','').replace('특별자치시','');
+}
 $('#areaChips').addEventListener('click',e=>{ const c=e.target.closest('.chip'); if(!c) return; $('#fArea').value=c.dataset.area; $('#fPeriod').value='all'; S.selDay=null; go('calendar'); });
 document.querySelectorAll('.more').forEach(b=>b.onclick=()=>{ $('#fPeriod').value=b.dataset.period; $('#fArea').value=''; S.selDay=null; go('calendar'); });
 
@@ -633,7 +717,7 @@ function card(f, dist){
   </div>`;
 }
 function grid(list, dists){
-  if(!list.length) return `<div class="empty">조건에 맞는 축제가 없어요.<br>기간이나 지역을 바꿔보세요.</div>`;
+  if(!list.length) return `<div class="empty">${T().emptyList}</div>`;
   return list.map((f,i)=>card(f, dists?dists[i]:null)).join('');
 }
 document.addEventListener('click', e=>{
@@ -643,31 +727,31 @@ document.addEventListener('click', e=>{
 /* ---------- 달력 ---------- */
 function renderCalendar(){
   const m=S.month, y=m.getFullYear(), mo=m.getMonth();
-  $('#calTitle').textContent=`${y}년 ${mo+1}월`;
+  $('#calTitle').textContent=T().monthTitle(y,mo+1);
   const base = filtered({period:'all', includePast:true});
   const first = new Date(y,mo,1), startDow=first.getDay();
   const gridStart = addDays(first, -startDow);
   const tday = ymd(today());
-  let html = ['일','월','화','수','목','금','토'].map(d=>`<div class="dow">${d}</div>`).join('');
+  let html = T().dow.map(d=>`<div class="dow">${d}</div>`).join('');
   for(let i=0;i<42;i++){
     const d=addDays(gridStart,i), k=ymd(d);
     if(i>=35 && d.getMonth()!==mo) break;
     const fs = dayList(base, k);
     const n = fs.length;
     const cls=['day', d.getMonth()!==mo?'other':'', k===tday?'today':'', S.selDay===k?'sel':''].join(' ');
-    const titles = fs.slice(0,3).map(f=>`<div class="t${f.start===k?' new':''}">${esc(f.title)}</div>`).join('') + (n>3?`<div class="t more">+${n-3}</div>`:'');
-    html+=`<div class="${cls}" data-day="${k}"><span class="n">${d.getDate()}</span><span class="cnt">${n?n+'개':''}</span><div class="tt">${titles}</div></div>`;
+    const titles = fs.slice(0,3).map(f=>`<div class="t${f.start===k?' new':''}">${esc(f.title)}</div>`).join('') + (n>3?`<div class="t more">${T().plus(n-3)}</div>`:'');
+    html+=`<div class="${cls}" data-day="${k}"><span class="n">${d.getDate()}</span><span class="cnt">${n?T().cnt(n):''}</span><div class="tt">${titles}</div></div>`;
   }
   $('#cal').innerHTML=html;
   const dl=$('#daylist');
   if(S.selDay){
     const d=parseYmd(S.selDay);
     const fs = dayList(base, S.selDay);
-    dl.innerHTML=`<h3>${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[d.getDay()]}요일 <small style="color:var(--ink3);font-weight:400">${fs.length}개</small></h3><div class="grid">${grid(fs)}</div>`;
+    dl.innerHTML=`<h3>${T().dayTitle(d)} <small style="color:var(--ink3);font-weight:400">${T().items(fs.length)}</small></h3><div class="grid">${grid(fs)}</div>`;
   } else {
     const fs = filtered();
-    const areaTxt = $('#fArea').value ? AREA_NAME[$('#fArea').value]+' ' : '';
-    dl.innerHTML=`<h3>${areaTxt}${periodLabel()} <small style="color:var(--ink3);font-weight:400">${fs.length}개</small></h3><div class="grid">${grid(fs.slice(0,60))}</div>${fs.length>60?`<div class="empty">외 ${fs.length-60}개 — 날짜를 눌러 좁혀보세요</div>`:''}`;
+    const areaTxt = $('#fArea').value ? areaName($('#fArea').value)+' ' : '';
+    dl.innerHTML=`<h3>${areaTxt}${periodLabel()} <small style="color:var(--ink3);font-weight:400">${T().items(fs.length)}</small></h3><div class="grid">${grid(fs.slice(0,60))}</div>${fs.length>60?`<div class="empty">${T().more(fs.length-60)}</div>`:''}`;
   }
 }
 /* 그날 열리는 축제 — 그날 시작하는 것 → 기간 짧은 것 순 (몇 달짜리 전시는 뒤로) */
@@ -719,7 +803,7 @@ function renderMap(){
     S.markers.push(m);
   });
   S.clusterer.addMarkers(S.markers);
-  $('#mapCnt').textContent=`${periodLabel()} · ${list.length}개`;
+  $('#mapCnt').textContent=T().mapCnt(periodLabel(), list.length);
   if(S.pos) setMyMarker();
 }
 let myMarker=null;
@@ -734,29 +818,29 @@ $('#mapKorea').onclick=()=>{ if(S.kakaoReady){ S.map.setLevel(13); S.map.setCent
 
 /* ---------- 내 주변 ---------- */
 function locate(cb){
-  if(!navigator.geolocation){ toast('이 브라우저는 위치 기능을 지원하지 않아요'); return; }
-  $('#posText').textContent='위치 확인 중…';
+  if(!navigator.geolocation){ toast(T().noGeo); return; }
+  $('#posText').textContent=T().locating;
   navigator.geolocation.getCurrentPosition(p=>{
-    S.pos={lat:p.coords.latitude, lng:p.coords.longitude, label:'현재 위치'};
+    S.pos={lat:p.coords.latitude, lng:p.coords.longitude, label:T().curLoc};
     $('#nearCity').value='';
     renderNearby(); renderHome(); cb&&cb();
   }, ()=>{
-    $('#posText').textContent='위치를 가져오지 못했어요. 도시를 골라주세요.';
-    toast('위치 권한이 거부됐거나 사용할 수 없어요');
+    $('#posText').textContent=T().locFail;
+    toast(T().geoDenied);
   }, {enableHighAccuracy:false, timeout:8000, maximumAge:300000});
 }
 function renderNearby(){
   const g=$('#nearGrid');
-  if(!S.pos){ g.innerHTML=`<div class="empty"><b>내 위치 찾기</b>를 누르거나 도시를 고르면<br>가까운 축제부터 보여드려요.</div>`; return; }
+  if(!S.pos){ g.innerHTML=`<div class="empty">${T().emptyNear}</div>`; return; }
   const r=+$('#nearRadius').value;
   const list=filtered().filter(f=>f.lat&&f.lng).map(f=>({f, d:km(S.pos,f)})).filter(x=>x.d<=r).sort((a,b)=>a.d-b.d);
-  $('#posText').textContent=`${S.pos.label} 기준 ${r}km 안 · ${periodLabel()} · ${list.length}개`;
+  $('#posText').textContent=T().nearInfo(S.pos.label, r, periodLabel(), list.length);
   g.innerHTML=grid(list.map(x=>x.f), list.map(x=>x.d));
 }
 $('#nearMe').onclick=()=>locate();
 $('#nearCity').onchange=e=>{
   const a=AREAS.find(x=>x.code===e.target.value);
-  if(a){ S.pos={lat:a.lat,lng:a.lng,label:a.name}; renderNearby(); renderHome(); }
+  if(a){ S.pos={lat:a.lat,lng:a.lng,label:areaName(a.code)}; renderNearby(); renderHome(); }
 };
 $('#nearRadius').onchange=renderNearby;
 
@@ -766,37 +850,43 @@ async function openDetail(id){
   const st=statusOf(f);
   $('#dHero').innerHTML = f.img ? `<img src="${esc(f.img)}" alt="" onerror="this.remove()">` : '';
   $('#dTitle').textContent=f.title;
-  $('#dSub').innerHTML=`<span class="pill ${st.cls}">${st.txt}</span>${S.pos?` &nbsp;${S.pos.label}에서 ${fmtKm(km(S.pos,f))}`:''}`;
-  $('#dMeta').innerHTML=`<li><b>기간</b><span>${fmtRange(f)}</span></li><li><b>장소</b><span>${esc(f.addr||AREA_NAME[f.area]||'-')}</span></li>${f.tel?`<li><b>문의</b><span><a href="tel:${esc(f.tel.replace(/[^0-9+]/g,''))}">${esc(f.tel)}</a></span></li>`:''}`;
+  $('#dSub').innerHTML=`<span class="pill ${st.cls}">${st.txt}</span>${S.pos?` &nbsp;${T().fromLoc(S.pos.label, fmtKm(km(S.pos,f)))}`:''}`;
+  $('#dMeta').innerHTML=`<li><b>${T().dDates}</b><span>${fmtRange(f)}</span></li><li><b>${T().dPlace}</b><span>${esc(f.addr||areaName(f.area)||'-')}</span></li>${f.tel?`<li><b>${T().dTel}</b><span><a href="tel:${esc(f.tel.replace(/[^0-9+]/g,''))}">${esc(f.tel)}</a></span></li>`:''}`;
   const q=encodeURIComponent(f.title);
   let acts='';
   if(f.lat&&f.lng){
-    acts+=`<a class="btn sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/map/${q},${f.lat},${f.lng}">카카오맵에서 보기</a>`;
-    acts+=`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/${q},${f.lat},${f.lng}">길찾기</a>`;
+    if(LANG==='en'){
+      acts+=`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${f.lat},${f.lng}">${T().openGoogle}</a>`;
+      acts+=`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/map/${q},${f.lat},${f.lng}">${T().openKakao}</a>`;
+    } else {
+      acts+=`<a class="btn sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/map/${q},${f.lat},${f.lng}">${T().openKakao}</a>`;
+      acts+=`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/${q},${f.lat},${f.lng}">${T().directions}</a>`;
+    }
   }
-  acts+=`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://search.naver.com/search.naver?query=${q}">네이버 검색</a>`;
-  acts+=`<button class="btn ghost sm" id="dShare">공유</button>`;
+  acts+= LANG==='en' ? `<a class="btn ghost sm" target="_blank" rel="noopener" href="https://www.google.com/search?q=${q}+Korea+festival">${T().webSearch}</a>`
+                     : `<a class="btn ghost sm" target="_blank" rel="noopener" href="https://search.naver.com/search.naver?query=${q}">${T().webSearch}</a>`;
+  acts+=`<button class="btn ghost sm" id="dShare">${T().share}</button>`;
   $('#dActs').innerHTML=acts;
   $('#dShare').onclick=async()=>{
     const text=`${f.title} (${fmtRange(f)}) ${f.addr}`;
     if(navigator.share){ try{ await navigator.share({title:f.title, text, url:location.href}); }catch(e){} }
-    else { try{ await navigator.clipboard.writeText(text+' '+location.href); toast('복사했어요'); }catch(e){ toast('복사에 실패했어요'); } }
+    else { try{ await navigator.clipboard.writeText(text+' '+location.href); toast(T().copied); }catch(e){ toast(T().copyFail); } }
   };
   $('#detail').classList.add('on');
   const ov=$('#dOverview'); ov.className='overview loading';
-  if(S.demo||!id||id.startsWith('demo')){ ov.textContent='샘플 데이터라 소개글이 없어요.'; ov.className='overview'; return; }
-  ov.textContent='소개 불러오는 중…';
+  if(S.demo||!id||id.startsWith('demo')){ ov.textContent=T().ovDemo; ov.className='overview'; return; }
+  ov.textContent=T().ovLoading;
   try{
-    const u=new URL('https://apis.data.go.kr/B551011/KorService2/detailCommon2');
+    const u=new URL(`https://apis.data.go.kr/B551011/${SERVICE()}/detailCommon2`);
     u.search=new URLSearchParams({serviceKey:keys().tour, MobileOS:'ETC', MobileApp:CONFIG.APP_NAME, _type:'json', contentId:id}).toString();
     const j=await (await fetch(u)).json();
     const it=j?.response?.body?.items?.item; const d=Array.isArray(it)?it[0]:it;
     let html='';
-    if(d?.homepage){ const m=String(d.homepage).match(/href="([^"]+)"/); const link=m?m[1]:String(d.homepage).replace(/<[^>]+>/g,''); if(/^https?:/.test(link)) html+=`<a href="${esc(link)}" target="_blank" rel="noopener">공식 홈페이지 ›</a>\n\n`; }
+    if(d?.homepage){ const m=String(d.homepage).match(/href="([^"]+)"/); const link=m?m[1]:String(d.homepage).replace(/<[^>]+>/g,''); if(/^https?:/.test(link)) html+=`<a href="${esc(link)}" target="_blank" rel="noopener">${T().homepage}</a>\n\n`; }
     const text=String(d?.overview||'').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').trim();
-    ov.innerHTML = html + (text?esc(text):'등록된 소개글이 없어요.');
+    ov.innerHTML = html + (text?esc(text):T().ovNone);
     ov.className='overview';
-  }catch(e){ ov.textContent='소개글을 불러오지 못했어요.'; ov.className='overview'; }
+  }catch(e){ ov.textContent=T().ovFail; ov.className='overview'; }
 }
 $('#dClose').onclick=()=>$('#detail').classList.remove('on');
 $('#detail').addEventListener('click',e=>{ if(e.target.id==='detail') $('#detail').classList.remove('on'); });
@@ -810,7 +900,7 @@ $('#sClose').onclick=()=>$('#settings').classList.remove('on');
 $('#settings').addEventListener('click',e=>{ if(e.target.id==='settings') $('#settings').classList.remove('on'); });
 $('#sSave').onclick=()=>{
   const tour=$('#inTour').value.trim(), kakao=$('#inKakao').value.trim();
-  try{ localStorage.setItem('fc_keys', JSON.stringify({tour,kakao})); localStorage.removeItem('fc_cache_v2'); }catch(e){}
+  try{ localStorage.setItem('fc_keys', JSON.stringify({tour,kakao})); localStorage.removeItem('fc_cache_v2_'+LANG); }catch(e){}
   $('#settings').classList.remove('on');
   const s=document.getElementById('kakaoSdk'); if(s){ s.remove(); } S.kakaoReady=false; S.kakaoFailed=false; S.map=null; myMarker=null;
   $('#mapMsg').style.display='flex'; $('#mapMsg').textContent='지도를 준비하는 중…';
@@ -818,7 +908,7 @@ $('#sSave').onclick=()=>{
   if(S.view==='map') ensureKakao();
 };
 $('#sDemo').onclick=()=>{ $('#settings').classList.remove('on'); loadDemo(); };
-$('#btnRefresh').onclick=()=>{ try{ localStorage.removeItem('fc_cache_v2'); }catch(e){} S.demo ? loadDemo() : loadFestivals(true); };
+$('#btnRefresh').onclick=()=>{ try{ localStorage.removeItem('fc_cache_v2_'+LANG); }catch(e){} S.demo ? loadDemo() : loadFestivals(true); };
 
 /* ---------- 탭/필터 ---------- */
 function go(view){
@@ -839,6 +929,8 @@ function renderAll(){ renderHome(); renderCalendar(); renderMap(); renderNearby(
 (function init(){
   const fa=$('#fArea'), nc=$('#nearCity');
   AREAS.forEach(a=>{ fa.insertAdjacentHTML('beforeend',`<option value="${a.code}">${a.name}</option>`); nc.insertAdjacentHTML('beforeend',`<option value="${a.code}">${a.name}</option>`); });
+  applyLang();
+  $('#btnLang').onclick=()=>setLang(LANG==='en'?'ko':'en');
   renderAll();
   loadFestivals();
 })();
