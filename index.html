@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>축제 달력</title>
+<meta name="description" content="이번 주말 어디 갈까? 한국관광공사 TourAPI로 보는 전국 축제 — 달력, 지도, 내 주변 100km">
+<meta name="theme-color" content="#fbfbfd">
+<style>
+  :root{
+    --bg:#fbfbfd; --surface:#ffffff; --fill:#f5f5f7; --fill2:#e8e8ed;
+    --ink:#1d1d1f; --ink2:#6e6e73; --ink3:#86868b; --hair:#d2d2d7;
+    --accent:#0071e3; --accent-soft:#e8f0fe;
+    --ok-bg:#e3f5e9; --ok-fg:#1a7f3c; --soon-bg:#fff1e0; --soon-fg:#b25000; --off-bg:#f5f5f7; --off-fg:#86868b;
+    --r:18px; --r2:12px; --nav:56px;
+    --shadow:0 2px 12px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.45;padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom))}
+  a{color:inherit;text-decoration:none} button{font:inherit;cursor:pointer;color:inherit;background:none;border:none;padding:0}
+  img{display:block}
+  svg{display:block}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:20;background:rgba(251,251,253,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--hair)}
+  .top{display:flex;align-items:center;gap:8px;height:52px}
+  .brand{font-weight:600;font-size:17px;letter-spacing:-.3px}
+  .brand span{color:var(--ink3);font-weight:400;margin-left:6px;font-size:13px}
+  .grow{flex:1}
+  .ib{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink2)}
+  .ib:hover{background:var(--fill)}
+  .filters{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .filters select,.filters input{border:none;background:var(--fill);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:500;color:var(--ink);min-width:0;appearance:none;-webkit-appearance:none;outline:none}
+  .filters select{padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+  .filters input{flex:1;min-width:160px;font-weight:400}
+  .filters input::placeholder{color:var(--ink3)}
+  body[data-view="home"] .filters{display:none}
+
+  /* ---------- bottom nav ---------- */
+  nav.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(251,251,253,.86);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--hair);padding-bottom:env(safe-area-inset-bottom)}
+  nav.nav .in{max-width:980px;margin:0 auto;display:flex;height:var(--nav)}
+  nav.nav button{flex:1;color:var(--ink3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:500;letter-spacing:.1px}
+  nav.nav button.on{color:var(--accent)}
+  nav.nav svg{width:24px;height:24px}
+
+  main{padding:16px 0 32px}
+  .view{display:none}.view.on{display:block}
+  .status{font-size:12px;color:var(--ink3);margin:0 0 16px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .banner{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);padding:16px 18px;font-size:14px;line-height:1.55;margin:0 0 16px;color:var(--ink2)}
+  .banner b{display:block;margin-bottom:4px;font-size:15px;color:var(--ink);font-weight:600}
+  .btn{border-radius:999px;padding:9px 18px;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;transition:opacity .15s}
+  .btn:active{opacity:.7}
+  .btn.ghost{background:var(--fill);color:var(--ink)}
+  .btn.sm{padding:7px 14px;font-size:13px}
+  .btn.link{background:none;color:var(--accent);padding:0}
+  .empty{text-align:center;color:var(--ink3);padding:36px 10px;font-size:14px;line-height:1.6}
+
+  /* ---------- section ---------- */
+  .sec{margin:0 0 36px}
+  .sh{display:flex;align-items:baseline;gap:10px;margin:0 0 14px}
+  .sh h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-.4px}
+  .sh small{font-size:13px;color:var(--ink3)}
+  .sh .more{margin-left:auto;font-size:14px;color:var(--accent);font-weight:400;white-space:nowrap}
+
+  /* ---------- hero (featured) ---------- */
+  .feat{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;background:var(--fill2);cursor:pointer;box-shadow:var(--shadow)}
+  @media (min-width:700px){ .feat{aspect-ratio:16/8} }
+  .feat img{width:100%;height:100%;object-fit:cover}
+  .feat .ph{width:100%;height:100%;background:linear-gradient(160deg,#e9eef7,#d9dfeb)}
+  .feat .ov{position:absolute;inset:auto 0 0 0;padding:120px 20px 22px;background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,.25) 45%,transparent);color:#fff}
+  .feat .eyebrow{font-size:12px;font-weight:500;letter-spacing:.2px;opacity:.85;margin-bottom:6px}
+  .feat .t{font-size:26px;font-weight:600;line-height:1.2;letter-spacing:-.5px;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .feat .m{font-size:14px;opacity:.9}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;letter-spacing:.1px}
+  .pill.live{background:var(--ok-bg);color:var(--ok-fg)} .pill.soon{background:var(--soon-bg);color:var(--soon-fg)} .pill.off{background:var(--off-bg);color:var(--off-fg)}
+  .pill.glass{background:rgba(255,255,255,.9);color:var(--ink);position:absolute;left:14px;top:14px}
+  .pill.dist{background:rgba(255,255,255,.9);color:var(--ink);position:absolute;right:14px;top:14px}
+
+  /* ---------- rails ---------- */
+  .rail{display:flex;gap:14px;overflow-x:auto;padding:2px 20px 8px;margin:0 -20px;scrollbar-width:none;scroll-snap-type:x proximity}
+  .rail::-webkit-scrollbar{display:none}
+  .rc{flex:0 0 170px;scroll-snap-align:start;cursor:pointer}
+  .rc .im{aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--fill2);position:relative}
+  .rc.sq .im{aspect-ratio:1/1}
+  .rc .im img{width:100%;height:100%;object-fit:cover}
+  .rc .im .ph{width:100%;height:100%;background:linear-gradient(160deg,#eceff5,#dfe4ee)}
+  .rc .im .pill{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.9);color:var(--ink)}
+  .rc .t{font-size:14px;font-weight:600;line-height:1.3;margin:10px 0 2px;letter-spacing:-.2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .rc .m{font-size:12.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @media (min-width:700px){ .rc{flex-basis:200px} }
+
+  /* ---------- rows (list) ---------- */
+  .rows{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .row{display:flex;gap:14px;align-items:center;padding:12px 16px;cursor:pointer;position:relative}
+  .row + .row::before{content:"";position:absolute;left:16px;right:0;top:0;height:1px;background:var(--hair)}
+  .row:active{background:var(--fill)}
+  .row .d{flex:0 0 40px;text-align:center}
+  .row .d b{display:block;font-size:22px;font-weight:600;line-height:1.1;letter-spacing:-.5px}
+  .row .d small{font-size:11px;color:var(--ink3);font-weight:500}
+  .row .im{flex:0 0 56px;height:56px;border-radius:10px;overflow:hidden;background:var(--fill2)}
+  .row .im img{width:100%;height:100%;object-fit:cover}
+  .row .tx{flex:1;min-width:0}
+  .row .t{font-weight:600;font-size:15px;line-height:1.3;letter-spacing:-.2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .row .m{font-size:12.5px;color:var(--ink3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .r{flex:0 0 auto;display:flex;align-items:center;gap:8px;color:var(--ink3)}
+  .row .r .pill{background:var(--fill);color:var(--ink2)}
+  .row .r svg{width:16px;height:16px;color:var(--hair)}
+
+  /* ---------- chips ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--fill);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:500}
+  .chip small{color:var(--ink3);margin-left:4px;font-weight:400}
+  .chip:active{background:var(--fill2)}
+
+  /* ---------- grid cards ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+  .card{background:var(--surface);border-radius:var(--r2);overflow:hidden;box-shadow:var(--shadow);cursor:pointer}
+  .card .thumb{aspect-ratio:4/3;position:relative;overflow:hidden;background:var(--fill2)}
+  .card .thumb img{width:100%;height:100%;object-fit:cover}
+  .card .thumb .ph{width:100%;height:100%;background:linear-gradient(160deg,#eceff5,#dfe4ee)}
+  .card .thumb .pill{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.9);color:var(--ink)}
+  .card .thumb .pill.dist{left:auto;right:10px}
+  .cbody{padding:10px 12px 12px}
+  .ctitle{font-weight:600;font-size:14px;line-height:1.3;letter-spacing:-.2px;margin:0 0 4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cmeta{font-size:12px;color:var(--ink3);line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- calendar ---------- */
+  .calhead{display:flex;align-items:center;gap:4px;margin:0 0 14px}
+  .calhead h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-.4px;flex:1}
+  .calhead .ib{color:var(--accent)}
+  .calhead .today{font-size:14px;color:var(--accent);padding:6px 10px;border-radius:999px}
+  .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;background:var(--surface);border-radius:var(--r);padding:12px 8px 8px;box-shadow:var(--shadow)}
+  .dow{text-align:center;font-size:11px;font-weight:600;color:var(--ink3);padding:0 0 8px}
+  .day{min-width:0;min-height:54px;border-radius:10px;padding:4px 2px 4px;cursor:pointer;text-align:center}
+  .day.other{opacity:.28}
+  .day.sel{background:var(--accent-soft)}
+  .day .n{font-size:14px;font-weight:500;display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%}
+  .day.today .n{background:var(--accent);color:#fff;font-weight:600}
+  .day .cnt{font-size:11px;color:var(--ink3);margin-top:2px;display:block;height:14px;font-weight:500}
+  .day.sel .cnt{color:var(--accent)}
+  @media (min-width:700px){ .day{min-height:68px} }
+  .daylist h3{font-size:17px;font-weight:600;margin:24px 0 12px;letter-spacing:-.3px}
+
+  /* ---------- map ---------- */
+  #map{width:100%;height:calc(100vh - 240px);min-height:380px;border-radius:var(--r);background:var(--fill);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+  .mapmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--ink2);font-size:14px;line-height:1.7;background:var(--fill);z-index:2}
+  .mapbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .mapbar .cnt{font-size:12.5px;color:var(--ink3);margin-left:auto}
+
+  /* ---------- nearby ---------- */
+  .nearbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .nearbar select{border:none;background:var(--fill);border-radius:999px;padding:8px 30px 8px 14px;font-size:13.5px;font-weight:500;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+  .pos{font-size:12.5px;color:var(--ink3);width:100%}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:50}
+  .modal.on{display:flex}
+  .sheet{background:var(--surface);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;position:relative}
+  @media (min-width:700px){ .modal{align-items:center;padding:20px} .sheet{border-radius:20px} }
+  .sheet .hero-img{aspect-ratio:4/3;background:linear-gradient(160deg,#eceff5,#dfe4ee);position:relative}
+  .sheet .hero-img img{width:100%;height:100%;object-fit:cover}
+  .sheet .close{position:absolute;right:12px;top:12px;background:rgba(255,255,255,.92);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink2);z-index:2}
+  .sheet .body{padding:18px 20px 28px}
+  .sheet h2{margin:0 0 4px;font-size:22px;line-height:1.25;font-weight:600;letter-spacing:-.4px}
+  .sheet .sub{color:var(--ink3);font-size:13px;margin:0 0 14px}
+  .kv{margin:0;padding:0;list-style:none;border-top:1px solid var(--hair)}
+  .kv li{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--hair);font-size:14px}
+  .kv li b{flex:0 0 44px;color:var(--ink3);font-weight:500}
+  .kv li span{flex:1;min-width:0}
+  .kv li a{color:var(--accent)}
+  .acts{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+  .overview{font-size:14px;line-height:1.75;color:var(--ink2);white-space:pre-line;padding-top:14px;margin-top:10px}
+  .overview a{color:var(--accent)}
+  .overview.loading{color:var(--ink3)}
+
+  /* ---------- settings ---------- */
+  .field{margin:0 0 14px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  .field input{width:100%;border:1px solid var(--hair);border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;outline:none}
+  .field input:focus{border-color:var(--accent)}
+  .field small{display:block;color:var(--ink3);font-size:12px;margin-top:6px;line-height:1.5}
+  .steps{font-size:13.5px;line-height:1.7;background:var(--fill);border-radius:12px;padding:14px 16px;margin:16px 0 0;color:var(--ink2)}
+  .steps b{color:var(--ink);font-weight:600}
+  .steps a{color:var(--accent)}
+  .steps ol{margin:6px 0 0;padding-left:18px}
+  .toast{position:fixed;left:50%;bottom:calc(var(--nav) + 20px);transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:13.5px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.on{opacity:1}
+  footer{text-align:center;font-size:12px;color:var(--ink3);padding:8px 0 24px;line-height:1.7}
+</style>
+</head>
+<body data-view="home">
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">축제 달력<span>전국</span></div>
+      <div class="grow"></div>
+      <button class="ib" id="btnRefresh" title="새로고침"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
+      <button class="ib" id="btnSettings" title="설정"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+    <div class="filters">
+      <select id="fPeriod">
+        <option value="all">전체 기간</option>
+        <option value="weekend">이번 주말</option>
+        <option value="week">이번 주</option>
+        <option value="month">이번 달</option>
+        <option value="nextmonth">다음 달</option>
+        <option value="live">지금 진행 중</option>
+      </select>
+      <select id="fArea"><option value="">전국</option></select>
+      <input id="fQ" type="search" placeholder="축제 이름, 지역 검색">
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner"></div>
+  <div class="status"><span id="statusText">불러오는 중…</span><span id="statusSub"></span></div>
+
+  <!-- 홈 -->
+  <section class="view on" id="view-home">
+    <div class="sec">
+      <div class="sh"><h2>이번 주말</h2><small id="wkLabel"></small><button class="more" data-go="calendar" data-period="weekend">모두 보기</button></div>
+      <div id="feat"></div>
+      <div class="rail" id="wkRail" style="margin-top:14px"></div>
+    </div>
+    <div class="sec">
+      <div class="sh"><h2>지금 진행 중</h2><small id="liveCnt"></small><button class="more" data-go="calendar" data-period="live">모두 보기</button></div>
+      <div class="rail" id="liveRail"></div>
+    </div>
+    <div class="sec">
+      <div class="sh"><h2>곧 시작</h2><small>2주 안에</small><button class="more" data-go="calendar" data-period="all">모두 보기</button></div>
+      <div class="rows" id="soonRows"></div>
+    </div>
+    <div class="sec">
+      <div class="sh"><h2>지역</h2></div>
+      <div class="chips" id="areaChips"></div>
+    </div>
+  </section>
+
+  <!-- 달력 -->
+  <section class="view" id="view-calendar">
+    <div class="calhead">
+      <h2 id="calTitle"></h2>
+      <button class="today" id="calToday">오늘</button>
+      <button class="ib" id="calPrev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="ib" id="calNext"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="cal" id="cal"></div>
+    <div class="daylist" id="daylist"></div>
+  </section>
+
+  <!-- 지도 -->
+  <section class="view" id="view-map">
+    <div class="mapbar">
+      <button class="btn ghost sm" id="mapMe">내 위치</button>
+      <button class="btn ghost sm" id="mapKorea">전국</button>
+      <span class="cnt" id="mapCnt"></span>
+    </div>
+    <div id="map"><div class="mapmsg" id="mapMsg">지도를 준비하는 중…</div></div>
+  </section>
+
+  <!-- 내 주변 -->
+  <section class="view" id="view-nearby">
+    <div class="nearbar">
+      <button class="btn sm" id="nearMe">내 위치 찾기</button>
+      <select id="nearCity"><option value="">도시 선택</option></select>
+      <select id="nearRadius">
+        <option value="30">30km</option>
+        <option value="50">50km</option>
+        <option value="100" selected>100km</option>
+        <option value="200">200km</option>
+      </select>
+      <span class="pos" id="posText">위치를 정하면 가까운 순으로 보여드려요</span>
+    </div>
+    <div class="grid" id="nearGrid"></div>
+  </section>
+</main>
+
+<footer>데이터 한국관광공사 TourAPI · 지도 카카오맵<br>축제 정보는 주최 측 사정으로 변경될 수 있습니다.</footer>
+
+<nav class="nav"><div class="in">
+  <button class="on" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</button>
+  <button data-view="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>달력</button>
+  <button data-view="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>지도</button>
+  <button data-view="nearby"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>내 주변</button>
+</div></nav>
+
+<!-- 상세 -->
+<div class="modal" id="detail">
+  <div class="sheet">
+    <div class="hero-img" id="dHero"></div>
+    <button class="close" id="dClose"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="body">
+      <h2 id="dTitle"></h2>
+      <p class="sub" id="dSub"></p>
+      <ul class="kv" id="dMeta"></ul>
+      <div class="acts" id="dActs"></div>
+      <div class="overview loading" id="dOverview"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 설정 -->
+<div class="modal" id="settings">
+  <div class="sheet">
+    <button class="close" id="sClose"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="body">
+      <h2>API 키 설정</h2>
+      <p class="sub">두 개의 키를 넣으면 실제 데이터와 지도가 동작해요. 이 브라우저에만 저장됩니다. (사이트를 공개할 때는 파일 위쪽 CONFIG에 직접 적어두세요.)</p>
+      <div class="field">
+        <label>① 한국관광공사 TourAPI 인증키 (공공데이터포털)</label>
+        <input id="inTour" placeholder="일반 인증키 (Decoding) 를 붙여넣기">
+        <small>data.go.kr → "한국관광공사_국문 관광정보 서비스_GW" 활용신청 → 마이페이지에서 일반 인증키(Decoding) 복사</small>
+      </div>
+      <div class="field">
+        <label>② 카카오맵 JavaScript 키</label>
+        <input id="inKakao" placeholder="Kakao Developers → 내 애플리케이션 → 앱 키 → JavaScript 키">
+        <small>앱 설정 → 카카오맵 사용 설정 ON, 플랫폼 → Web 에 이 사이트 주소를 등록해야 지도가 뜹니다.</small>
+      </div>
+      <div class="acts">
+        <button class="btn" id="sSave">저장하고 불러오기</button>
+        <button class="btn ghost" id="sDemo">샘플 데이터로 구경하기</button>
+      </div>
+      <div class="steps">
+        <b>키가 아직 없다면</b>
+        <ol>
+          <li><a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a> 회원가입 → 검색창에 <b>한국관광공사_국문 관광정보 서비스_GW</b> → 활용신청</li>
+          <li><a href="https://developers.kakao.com" target="_blank" rel="noopener">Kakao Developers</a> → 내 애플리케이션 → 애플리케이션 추가 → 앱 키의 <b>JavaScript 키</b></li>
+          <li>같은 화면에서 <b>카카오맵 → 사용 설정 ON</b>, <b>플랫폼 → Web → 사이트 도메인</b>에 이 페이지 주소 등록</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   설정 — 사이트를 공개할 때 여기에 키를 적어두면 됩니다.
+   비워두면 화면의 설정에서 입력한 키(이 브라우저에만 저장)를 씁니다.
+   ========================================================= */
+const CONFIG = {
+  TOUR_API_KEY: '00c5948b2d97409420332c2468742b006bee539754940bb003e6406c8b2754dd',      // 공공데이터포털 일반 인증키
+  KAKAO_JS_KEY: '6483ef287ab90e427ef9e38f250a7ee7',      // 카카오맵 JavaScript 키
+  APP_NAME: 'FestivalCalendar',
+  CACHE_HOURS: 6         // 같은 데이터를 몇 시간 동안 재사용할지 (API 호출 절약)
+};
+
+/* ---------- 지역 코드 (TourAPI areaCode) ---------- */
+const AREAS = [
+  {code:'1',  name:'서울', lat:37.5665, lng:126.9780},
+  {code:'2',  name:'인천', lat:37.4563, lng:126.7052},
+  {code:'3',  name:'대전', lat:36.3504, lng:127.3845},
+  {code:'4',  name:'대구', lat:35.8714, lng:128.6014},
+  {code:'5',  name:'광주', lat:35.1595, lng:126.8526},
+  {code:'6',  name:'부산', lat:35.1796, lng:129.0756},
+  {code:'7',  name:'울산', lat:35.5384, lng:129.3114},
+  {code:'8',  name:'세종', lat:36.4800, lng:127.2890},
+  {code:'31', name:'경기', lat:37.4138, lng:127.5183},
+  {code:'32', name:'강원', lat:37.8228, lng:128.1555},
+  {code:'33', name:'충북', lat:36.6357, lng:127.4917},
+  {code:'34', name:'충남', lat:36.5184, lng:126.8000},
+  {code:'35', name:'경북', lat:36.4919, lng:128.8889},
+  {code:'36', name:'경남', lat:35.4606, lng:128.2132},
+  {code:'37', name:'전북', lat:35.7175, lng:127.1530},
+  {code:'38', name:'전남', lat:34.8679, lng:126.9910},
+  {code:'39', name:'제주', lat:33.4996, lng:126.5312},
+];
+const AREA_NAME = Object.fromEntries(AREAS.map(a=>[a.code,a.name]));
+
+/* ---------- 상태 ---------- */
+const S = {
+  list: [], view: 'home', month: startOfMonth(new Date()), selDay: null,
+  pos: null, demo: false,
+  map: null, clusterer: null, markers: [], kakaoReady: false, kakaoFailed: false
+};
+
+/* ---------- 유틸 ---------- */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,'0');
+function ymd(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()); }
+function parseYmd(s){ return new Date(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8)); }
+function startOfMonth(d){ return new Date(d.getFullYear(), d.getMonth(), 1); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function today(){ const t=new Date(); t.setHours(0,0,0,0); return t; }
+function fmtDate(s){ if(!s||s.length<8) return ''; return `${s.slice(0,4)}.${s.slice(4,6)}.${s.slice(6,8)}`; }
+function fmtShort(s){ if(!s||s.length<8) return ''; return `${+s.slice(4,6)}.${+s.slice(6,8)}`; }
+function fmtRange(f){ return f.start===f.end ? fmtDate(f.start) : `${fmtDate(f.start)} – ${fmtDate(f.end)}`; }
+function fmtRangeShort(f){ return f.start===f.end ? fmtShort(f.start) : `${fmtShort(f.start)} – ${fmtShort(f.end)}`; }
+const DOW='일월화수목금토';
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function km(a,b){
+  const R=6371, toR=x=>x*Math.PI/180;
+  const dLat=toR(b.lat-a.lat), dLng=toR(b.lng-a.lng);
+  const h=Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function fmtKm(d){ return (d<10?d.toFixed(1):Math.round(d))+' km'; }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2200); }
+function keys(){
+  let saved={}; try{ saved=JSON.parse(localStorage.getItem('fc_keys')||'{}'); }catch(e){}
+  return { tour: CONFIG.TOUR_API_KEY || saved.tour || '', kakao: CONFIG.KAKAO_JS_KEY || saved.kakao || '' };
+}
+function imgOrPh(src){ return src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=ph></div>'">` : `<div class="ph"></div>`; }
+const CHEV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+
+/* ---------- 기간 계산 ---------- */
+function periodRange(p){
+  const t=today(), dow=t.getDay();
+  if(p==='weekend'){ const sat = dow===0 ? addDays(t,-1) : addDays(t, 6-dow); return [sat, addDays(sat,1)]; }
+  if(p==='week'){ const mon = addDays(t, dow===0 ? -6 : 1-dow); return [mon, addDays(mon,6)]; }
+  if(p==='month'){ return [startOfMonth(t), addDays(startOfMonth(addDays(startOfMonth(t),40)),-1)]; }
+  if(p==='nextmonth'){ const n=startOfMonth(addDays(startOfMonth(t),40)); return [n, addDays(startOfMonth(addDays(n,40)),-1)]; }
+  if(p==='live'){ return [t,t]; }
+  return null;
+}
+function overlaps(f, a, b){ return f.start <= ymd(b) && f.end >= ymd(a); }
+function statusOf(f){
+  const t=ymd(today());
+  if(f.end < t) return {cls:'off', txt:'종료'};
+  if(f.start <= t) return {cls:'live', txt:'진행 중'};
+  const d=Math.round((parseYmd(f.start)-today())/86400000);
+  return {cls:'soon', txt: d===0?'오늘 시작':`D-${d}`};
+}
+function byPeriod(p){ const r=periodRange(p); const t=ymd(today()); return S.list.filter(f=> r ? overlaps(f,r[0],r[1]) : f.end>=t); }
+
+/* ---------- 필터 (달력/지도/내 주변 공용) ---------- */
+function filtered(opts={}){
+  const p = opts.period ?? $('#fPeriod').value;
+  const area = $('#fArea').value;
+  const q = $('#fQ').value.trim().toLowerCase();
+  const r = periodRange(p);
+  const t = ymd(today());
+  return S.list.filter(f=>{
+    if(area && f.area!==area) return false;
+    if(q && !(f.title.toLowerCase().includes(q) || f.addr.toLowerCase().includes(q))) return false;
+    if(r){ if(!overlaps(f, r[0], r[1])) return false; }
+    else if(!opts.includePast && f.end < t) return false;
+    return true;
+  });
+}
+
+/* ---------- 데이터 불러오기 ---------- */
+async function loadFestivals(force=false){
+  const k = keys();
+  if(!k.tour){ showBanner('setup'); setStatus('API 키가 없어요.', ''); return; }
+  if(!force){
+    try{
+      const c = JSON.parse(localStorage.getItem('fc_cache')||'null');
+      if(c && Date.now()-c.at < CONFIG.CACHE_HOURS*3600e3 && c.from===ymd(startOfMonth(today()))){
+        S.list=c.items; S.demo=false; hideBanner();
+        setStatus(`축제 ${S.list.length}개`, `${new Date(c.at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 기준 · 관광공사 최근 수정 ${latestMod()}`);
+        renderAll(); return;
+      }
+    }catch(e){}
+  }
+  setStatus('한국관광공사에서 축제 정보를 받아오는 중…','');
+  const from = ymd(startOfMonth(today()));
+  const items=[]; let page=1, total=Infinity;
+  try{
+    while(items.length < total && page <= 12){
+      const u = new URL('https://apis.data.go.kr/B551011/KorService2/searchFestival2');
+      u.search = new URLSearchParams({
+        serviceKey:k.tour, MobileOS:'ETC', MobileApp:CONFIG.APP_NAME, _type:'json',
+        arrange:'C', eventStartDate:from, numOfRows:'500', pageNo:String(page)
+      }).toString();
+      const res = await fetch(u);
+      const txt = await res.text();
+      let j; try{ j=JSON.parse(txt); }catch(e){ throw new Error(explainXml(txt)); }
+      const h = j?.response?.header;
+      if(!h || h.resultCode!=='0000') throw new Error((h?.resultMsg)||'알 수 없는 응답');
+      const body = j.response.body;
+      total = +body.totalCount || 0;
+      const arr = body.items && body.items.item ? [].concat(body.items.item) : [];
+      arr.forEach(x=>items.push(norm(x)));
+      if(arr.length===0) break;
+      page++;
+    }
+  }catch(err){
+    showBanner('error', err.message);
+    setStatus('불러오기 실패', '');
+    if(S.list.length===0) renderAll();
+    return;
+  }
+  S.list = items.filter(f=>f.start && f.end);
+  S.demo=false; hideBanner();
+  try{ localStorage.setItem('fc_cache', JSON.stringify({at:Date.now(), from, items:S.list})); }catch(e){}
+  setStatus(`축제 ${S.list.length}개`, `방금 업데이트 · 관광공사 최근 수정 ${latestMod()}`);
+  renderAll();
+}
+function latestMod(){ const m=S.list.reduce((a,f)=>f.mod>a?f.mod:a,''); return m?fmtDate(m):'-'; }
+function explainXml(txt){
+  const m = txt.match(/<returnAuthMsg>([^<]+)<\/returnAuthMsg>|<errMsg>([^<]+)<\/errMsg>|<resultMsg>([^<]+)<\/resultMsg>/);
+  const msg = m ? (m[1]||m[2]||m[3]) : '';
+  if(/NOT_REGISTERED|UNREGISTERED|KEY/i.test(msg)) return '인증키가 아직 등록되지 않았거나 잘못됐어요. 활용신청 승인 후 "일반 인증키(Decoding)"를 다시 확인해 주세요.';
+  if(/LIMITED|EXCEEDS/i.test(msg)) return '오늘 API 호출 한도를 넘었어요. 내일 다시 시도하거나 운영계정으로 전환해 주세요.';
+  return msg || '응답이 JSON 형식이 아니에요 (키 또는 네트워크 문제일 수 있어요).';
+}
+function norm(x){
+  return {
+    id: String(x.contentid||''), title: (x.title||'').trim(),
+    addr: [x.addr1, x.addr2].filter(Boolean).join(' ').trim(),
+    start: String(x.eventstartdate||''), end: String(x.eventenddate||x.eventstartdate||''),
+    lat: parseFloat(x.mapy)||0, lng: parseFloat(x.mapx)||0,
+    img: x.firstimage || x.firstimage2 || '',      // 큰 사진
+    thumb: x.firstimage2 || x.firstimage || '',    // 작은 사진 (목록용)
+    tel: (x.tel||'').trim(),
+    area: String(x.areacode||''), sigungu: String(x.sigungucode||''),
+    mod: String(x.modifiedtime||'')
+  };
+}
+
+/* ---------- 샘플 데이터 (키 발급 전 미리보기용) ---------- */
+function loadDemo(){
+  const t=today();
+  const mk=(n,i,area,lat,lng,ds,de)=>({id:'demo'+i,title:`(샘플) ${n}`,addr:`${AREA_NAME[area]} 어딘가 · 예시 주소`,start:ymd(addDays(t,ds)),end:ymd(addDays(t,de)),lat,lng,img:'',thumb:'',tel:'',area,sigungu:'',mod:''});
+  S.list=[
+    mk('한강 불꽃 페스티벌',1,'1',37.5283,126.9326,1,2),
+    mk('송도 바다 음악제',2,'2',37.3894,126.6392,-3,4),
+    mk('춘천 막국수 축제',3,'32',37.8813,127.7298,5,9),
+    mk('보령 머드 페스타',4,'34',36.3161,126.5089,12,18),
+    mk('전주 한옥마을 야행',5,'37',35.8150,127.1530,0,3),
+    mk('부산 자갈치 축제',6,'6',35.0966,129.0306,2,4),
+    mk('경주 벚꽃 마라톤',7,'35',35.8562,129.2247,20,20),
+    mk('제주 들불 축제',8,'39',33.3617,126.3573,30,32),
+    mk('대구 치맥 페스티벌',9,'4',35.8580,128.5910,8,11),
+    mk('여수 밤바다 낭만 버스킹',10,'38',34.7415,127.7360,-10,-2),
+  ];
+  S.demo=true; hideBanner();
+  setStatus('샘플 데이터 10개 (실제 축제가 아니에요)', '키를 넣으면 실제 데이터로 바뀝니다');
+  renderAll();
+}
+
+/* ---------- 배너/상태 ---------- */
+function showBanner(type,msg){
+  const b=$('#banner');
+  if(type==='setup') b.innerHTML=`<div class="banner"><b>API 키를 먼저 넣어주세요</b>오른쪽 위 설정에서 TourAPI 키와 카카오맵 키를 입력하면 실제 축제가 나타나요. 키가 아직 없으면 샘플 데이터로 화면을 먼저 볼 수 있어요.<div class="acts" style="margin-bottom:0"><button class="btn sm" onclick="openSettings()">설정 열기</button><button class="btn ghost sm" onclick="loadDemo()">샘플로 보기</button></div></div>`;
+  else b.innerHTML=`<div class="banner"><b>축제 정보를 못 받아왔어요</b>${esc(msg)}<div class="acts" style="margin-bottom:0"><button class="btn ghost sm" onclick="openSettings()">키 다시 확인</button><button class="btn ghost sm" onclick="loadFestivals(true)">다시 시도</button></div></div>`;
+}
+function hideBanner(){ $('#banner').innerHTML=''; }
+function setStatus(a,b){ $('#statusText').textContent=a; $('#statusSub').textContent=b||''; }
+
+/* ---------- 홈 ---------- */
+function renderHome(){
+  const [sa,su]=periodRange('weekend');
+  $('#wkLabel').textContent=`${sa.getMonth()+1}월 ${sa.getDate()}일 – ${su.getDate()}일`;
+  let wk = byPeriod('weekend').slice().sort((a,b)=> (b.img?1:0)-(a.img?1:0) || a.start.localeCompare(b.start));
+  const feat=$('#feat'), rail=$('#wkRail');
+  if(!wk.length){ feat.innerHTML=`<div class="rows"><div class="empty">이번 주말 등록된 축제가 없어요</div></div>`; rail.innerHTML=''; }
+  else {
+    const f=wk[0], st=statusOf(f);
+    feat.innerHTML=`<div class="feat" data-id="${esc(f.id)}">${imgOrPh(f.img)}<span class="pill glass">${st.txt}</span>${S.pos?`<span class="pill dist">${fmtKm(km(S.pos,f))}</span>`:''}
+      <div class="ov"><div class="eyebrow">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div><div class="t">${esc(f.title)}</div></div></div>`;
+    rail.innerHTML = wk.slice(1,13).map(f=>railCard(f)).join('');
+    rail.style.display = wk.length>1 ? '' : 'none';
+  }
+
+  const live = byPeriod('live').sort((a,b)=>a.end.localeCompare(b.end));
+  $('#liveCnt').textContent=`${live.length}개`;
+  $('#liveRail').innerHTML = live.length ? live.slice(0,20).map(f=>railCard(f,'sq',`${fmtShort(f.end)}까지`)).join('')
+    : `<div class="empty" style="width:100%">지금 진행 중인 축제가 없어요</div>`;
+
+  const t=ymd(today()), lim=ymd(addDays(today(),14));
+  const soon = S.list.filter(f=>f.start>t && f.start<=lim).sort((a,b)=>a.start.localeCompare(b.start));
+  $('#soonRows').innerHTML = soon.length ? soon.slice(0,10).map(f=>{
+    const d=parseYmd(f.start);
+    return `<div class="row" data-id="${esc(f.id)}"><div class="d"><b>${d.getDate()}</b><small>${d.getMonth()+1}월 ${DOW[d.getDay()]}</small></div><div class="im">${imgOrPh(f.thumb)}</div><div class="tx"><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div><div class="r">${S.pos?`<span class="pill">${fmtKm(km(S.pos,f))}</span>`:''}${CHEV}</div></div>`;
+  }).join('') : `<div class="empty">2주 안에 시작하는 축제가 없어요</div>`;
+
+  const upcoming = S.list.filter(f=>f.end>=t);
+  $('#areaChips').innerHTML = AREAS.map(a=>{ const n=upcoming.filter(f=>f.area===a.code).length; return n?`<button class="chip" data-area="${a.code}">${a.name}<small>${n}</small></button>`:''; }).join('');
+}
+function railCard(f, cls='', label){
+  const st=statusOf(f);
+  return `<div class="rc ${cls}" data-id="${esc(f.id)}"><div class="im">${imgOrPh(f.thumb)}<span class="pill">${label||st.txt}</span></div><div class="t">${esc(f.title)}</div><div class="m">${fmtRangeShort(f)} · ${esc(shortAddr(f))}</div></div>`;
+}
+function shortAddr(f){ if(!f.addr) return AREA_NAME[f.area]||''; const p=f.addr.split(' '); return p.slice(0,2).join(' ').replace('특별자치도','').replace('특별시','').replace('광역시','').replace('특별자치시',''); }
+$('#areaChips').addEventListener('click',e=>{ const c=e.target.closest('.chip'); if(!c) return; $('#fArea').value=c.dataset.area; $('#fPeriod').value='all'; S.selDay=null; go('calendar'); });
+document.querySelectorAll('.more').forEach(b=>b.onclick=()=>{ $('#fPeriod').value=b.dataset.period; $('#fArea').value=''; S.selDay=null; go('calendar'); });
+
+/* ---------- 카드 (그리드) ---------- */
+function card(f, dist){
+  const st=statusOf(f);
+  return `<div class="card" data-id="${esc(f.id)}">
+    <div class="thumb">${imgOrPh(f.thumb)}<span class="pill">${st.txt}</span>${dist!=null?`<span class="pill dist">${fmtKm(dist)}</span>`:''}</div>
+    <div class="cbody"><div class="ctitle">${esc(f.title)}</div><div class="cmeta">${fmtRangeShort(f)}</div><div class="cmeta">${esc(shortAddr(f))}</div></div>
+  </div>`;
+}
+function grid(list, dists){
+  if(!list.length) return `<div class="empty">조건에 맞는 축제가 없어요.<br>기간이나 지역을 바꿔보세요.</div>`;
+  return list.map((f,i)=>card(f, dists?dists[i]:null)).join('');
+}
+document.addEventListener('click', e=>{
+  const c=e.target.closest('[data-id]'); if(c && !e.target.closest('.modal')) openDetail(c.dataset.id);
+});
+
+/* ---------- 달력 ---------- */
+function renderCalendar(){
+  const m=S.month, y=m.getFullYear(), mo=m.getMonth();
+  $('#calTitle').textContent=`${y}년 ${mo+1}월`;
+  const base = filtered({period:'all', includePast:true});
+  const first = new Date(y,mo,1), startDow=first.getDay();
+  const gridStart = addDays(first, -startDow);
+  const tday = ymd(today());
+  let html = ['일','월','화','수','목','금','토'].map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<42;i++){
+    const d=addDays(gridStart,i), k=ymd(d);
+    if(i>=35 && d.getMonth()!==mo) break;
+    const n = base.filter(f=>f.start<=k && f.end>=k).length;
+    const cls=['day', d.getMonth()!==mo?'other':'', k===tday?'today':'', S.selDay===k?'sel':''].join(' ');
+    html+=`<div class="${cls}" data-day="${k}"><span class="n">${d.getDate()}</span><span class="cnt">${n||''}</span></div>`;
+  }
+  $('#cal').innerHTML=html;
+  const dl=$('#daylist');
+  if(S.selDay){
+    const d=parseYmd(S.selDay);
+    const fs = base.filter(f=>f.start<=S.selDay && f.end>=S.selDay);
+    dl.innerHTML=`<h3>${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[d.getDay()]}요일 <small style="color:var(--ink3);font-weight:400">${fs.length}개</small></h3><div class="grid">${grid(fs)}</div>`;
+  } else {
+    const fs = filtered();
+    const areaTxt = $('#fArea').value ? AREA_NAME[$('#fArea').value]+' ' : '';
+    dl.innerHTML=`<h3>${areaTxt}${periodLabel()} <small style="color:var(--ink3);font-weight:400">${fs.length}개</small></h3><div class="grid">${grid(fs.slice(0,60))}</div>${fs.length>60?`<div class="empty">외 ${fs.length-60}개 — 날짜를 눌러 좁혀보세요</div>`:''}`;
+  }
+}
+function periodLabel(){ return $('#fPeriod').options[$('#fPeriod').selectedIndex].text; }
+$('#cal').addEventListener('click', e=>{
+  const d=e.target.closest('.day'); if(!d) return;
+  S.selDay = S.selDay===d.dataset.day ? null : d.dataset.day; renderCalendar();
+});
+$('#calPrev').onclick=()=>{ S.month=startOfMonth(addDays(S.month,-1)); S.selDay=null; renderCalendar(); };
+$('#calNext').onclick=()=>{ S.month=startOfMonth(addDays(S.month,40)); S.selDay=null; renderCalendar(); };
+$('#calToday').onclick=()=>{ S.month=startOfMonth(today()); S.selDay=ymd(today()); renderCalendar(); };
+
+/* ---------- 지도 (카카오맵) ---------- */
+function ensureKakao(){
+  if(S.kakaoReady || S.kakaoFailed || document.getElementById('kakaoSdk')) return;
+  const k=keys();
+  if(!k.kakao){ $('#mapMsg').innerHTML='카카오맵 JavaScript 키가 없어요.<br>설정에서 키를 넣어주세요.'; return; }
+  const s=document.createElement('script'); s.id='kakaoSdk';
+  s.src=`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(k.kakao)}&autoload=false&libraries=clusterer`;
+  s.onload=()=>{ try{ kakao.maps.load(initMap); }catch(e){ kakaoFail(); } };
+  s.onerror=kakaoFail;
+  document.head.appendChild(s);
+  setTimeout(()=>{ if(!S.kakaoReady && !S.kakaoFailed) kakaoFail(); }, 12000);
+}
+function kakaoFail(){
+  S.kakaoFailed=true;
+  const here = location.protocol==='file:' ? '파일을 직접 연 상태(file://)라 지도는 사이트에 올린 뒤 볼 수 있어요.' : `플랫폼 → Web 에 <b>${esc(location.origin)}</b> 등록`;
+  $('#mapMsg').innerHTML=`지도를 불러오지 못했어요.<br><br>${here}<br>Kakao Developers에서 카카오맵 <b>사용 설정 ON</b>, <b>JavaScript 키</b>인지 확인해 주세요.<br><br><button class="btn ghost sm" onclick="retryKakao()">다시 시도</button>`;
+}
+function retryKakao(){ const s=document.getElementById('kakaoSdk'); if(s) s.remove(); S.kakaoFailed=false; ensureKakao(); }
+function initMap(){
+  S.kakaoReady=true; $('#mapMsg').style.display='none';
+  S.map=new kakao.maps.Map($('#map'), {center:new kakao.maps.LatLng(36.3,127.8), level:13});
+  S.map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
+  S.clusterer=new kakao.maps.MarkerClusterer({map:S.map, averageCenter:true, minLevel:7});
+  renderMap();
+}
+function renderMap(){
+  if(!S.kakaoReady) return;
+  S.clusterer.clear(); S.markers=[];
+  const list=filtered().filter(f=>f.lat&&f.lng);
+  list.forEach(f=>{
+    const m=new kakao.maps.Marker({position:new kakao.maps.LatLng(f.lat,f.lng), title:f.title});
+    kakao.maps.event.addListener(m,'click',()=>openDetail(f.id));
+    S.markers.push(m);
+  });
+  S.clusterer.addMarkers(S.markers);
+  $('#mapCnt').textContent=`${periodLabel()} · ${list.length}개`;
+  if(S.pos) setMyMarker();
+}
+let myMarker=null;
+function setMyMarker(){
+  if(!S.kakaoReady||!S.pos) return;
+  const p=new kakao.maps.LatLng(S.pos.lat,S.pos.lng);
+  if(!myMarker){ myMarker=new kakao.maps.Circle({center:p, radius:400, strokeWeight:2, strokeColor:'#0071e3', fillColor:'#0071e3', fillOpacity:.3}); myMarker.setMap(S.map); }
+  else myMarker.setPosition(p);
+}
+$('#mapMe').onclick=()=>locate(()=>{ if(S.kakaoReady){ S.map.setLevel(9); S.map.setCenter(new kakao.maps.LatLng(S.pos.lat,S.pos.lng)); setMyMarker(); } });
+$('#mapKorea').onclick=()=>{ if(S.kakaoReady){ S.map.setLevel(13); S.map.setCenter(new kakao.maps.LatLng(36.3,127.8)); } };
+
+/* ---------- 내 주변 ---------- */
+function locate(cb){
+  if(!navigator.geolocation){ toast('이 브라우저는 위치 기능을 지원하지 않아요'); return; }
+  $('#posText').textContent='위치 확인 중…';
+  navigator.geolocation.getCurrentPosition(p=>{
+    S.pos={lat:p.coords.latitude, lng:p.coords.longitude, label:'현재 위치'};
+    $('#nearCity').value='';
+    renderNearby(); renderHome(); cb&&cb();
+  }, ()=>{
+    $('#posText').textContent='위치를 가져오지 못했어요. 도시를 골라주세요.';
+    toast('위치 권한이 거부됐거나 사용할 수 없어요');
+  }, {enableHighAccuracy:false, timeout:8000, maximumAge:300000});
+}
+function renderNearby(){
+  const g=$('#nearGrid');
+  if(!S.pos){ g.innerHTML=`<div class="empty"><b>내 위치 찾기</b>를 누르거나 도시를 고르면<br>가까운 축제부터 보여드려요.</div>`; return; }
+  const r=+$('#nearRadius').value;
+  const list=filtered().filter(f=>f.lat&&f.lng).map(f=>({f, d:km(S.pos,f)})).filter(x=>x.d<=r).sort((a,b)=>a.d-b.d);
+  $('#posText').textContent=`${S.pos.label} 기준 ${r}km 안 · ${periodLabel()} · ${list.length}개`;
+  g.innerHTML=grid(list.map(x=>x.f), list.map(x=>x.d));
+}
+$('#nearMe').onclick=()=>locate();
+$('#nearCity').onchange=e=>{
+  const a=AREAS.find(x=>x.code===e.target.value);
+  if(a){ S.pos={lat:a.lat,lng:a.lng,label:a.name}; renderNearby(); renderHome(); }
+};
+$('#nearRadius').onchange=renderNearby;
+
+/* ---------- 상세 ---------- */
+async function openDetail(id){
+  const f=S.list.find(x=>x.id===id); if(!f) return;
+  const st=statusOf(f);
+  $('#dHero').innerHTML = f.img ? `<img src="${esc(f.img)}" alt="" onerror="this.remove()">` : '';
+  $('#dTitle').textContent=f.title;
+  $('#dSub').innerHTML=`<span class="pill ${st.cls}">${st.txt}</span>${S.pos?` &nbsp;${S.pos.label}에서 ${fmtKm(km(S.pos,f))}`:''}`;
+  $('#dMeta').innerHTML=`<li><b>기간</b><span>${fmtRange(f)}</span></li><li><b>장소</b><span>${esc(f.addr||AREA_NAME[f.area]||'-')}</span></li>${f.tel?`<li><b>문의</b><span><a href="tel:${esc(f.tel.replace(/[^0-9+]/g,''))}">${esc(f.tel)}</a></span></li>`:''}`;
+  const q=encodeURIComponent(f.title);
+  let acts='';
+  if(f.lat&&f.lng){
+    acts+=`<a class="btn sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/map/${q},${f.lat},${f.lng}">카카오맵에서 보기</a>`;
+    acts+=`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/${q},${f.lat},${f.lng}">길찾기</a>`;
+  }
+  acts+=`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://search.naver.com/search.naver?query=${q}">네이버 검색</a>`;
+  acts+=`<button class="btn ghost sm" id="dShare">공유</button>`;
+  $('#dActs').innerHTML=acts;
+  $('#dShare').onclick=async()=>{
+    const text=`${f.title} (${fmtRange(f)}) ${f.addr}`;
+    if(navigator.share){ try{ await navigator.share({title:f.title, text, url:location.href}); }catch(e){} }
+    else { try{ await navigator.clipboard.writeText(text+' '+location.href); toast('복사했어요'); }catch(e){ toast('복사에 실패했어요'); } }
+  };
+  $('#detail').classList.add('on');
+  const ov=$('#dOverview'); ov.className='overview loading';
+  if(S.demo||!id||id.startsWith('demo')){ ov.textContent='샘플 데이터라 소개글이 없어요.'; ov.className='overview'; return; }
+  ov.textContent='소개 불러오는 중…';
+  try{
+    const u=new URL('https://apis.data.go.kr/B551011/KorService2/detailCommon2');
+    u.search=new URLSearchParams({serviceKey:keys().tour, MobileOS:'ETC', MobileApp:CONFIG.APP_NAME, _type:'json', contentId:id}).toString();
+    const j=await (await fetch(u)).json();
+    const it=j?.response?.body?.items?.item; const d=Array.isArray(it)?it[0]:it;
+    let html='';
+    if(d?.homepage){ const m=String(d.homepage).match(/href="([^"]+)"/); const link=m?m[1]:String(d.homepage).replace(/<[^>]+>/g,''); if(/^https?:/.test(link)) html+=`<a href="${esc(link)}" target="_blank" rel="noopener">공식 홈페이지 ›</a>\n\n`; }
+    const text=String(d?.overview||'').replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').trim();
+    ov.innerHTML = html + (text?esc(text):'등록된 소개글이 없어요.');
+    ov.className='overview';
+  }catch(e){ ov.textContent='소개글을 불러오지 못했어요.'; ov.className='overview'; }
+}
+$('#dClose').onclick=()=>$('#detail').classList.remove('on');
+$('#detail').addEventListener('click',e=>{ if(e.target.id==='detail') $('#detail').classList.remove('on'); });
+
+/* ---------- 설정 ---------- */
+function openSettings(){
+  const k=keys(); $('#inTour').value=k.tour; $('#inKakao').value=k.kakao; $('#settings').classList.add('on');
+}
+$('#btnSettings').onclick=openSettings;
+$('#sClose').onclick=()=>$('#settings').classList.remove('on');
+$('#settings').addEventListener('click',e=>{ if(e.target.id==='settings') $('#settings').classList.remove('on'); });
+$('#sSave').onclick=()=>{
+  const tour=$('#inTour').value.trim(), kakao=$('#inKakao').value.trim();
+  try{ localStorage.setItem('fc_keys', JSON.stringify({tour,kakao})); localStorage.removeItem('fc_cache'); }catch(e){}
+  $('#settings').classList.remove('on');
+  const s=document.getElementById('kakaoSdk'); if(s){ s.remove(); } S.kakaoReady=false; S.kakaoFailed=false; S.map=null; myMarker=null;
+  $('#mapMsg').style.display='flex'; $('#mapMsg').textContent='지도를 준비하는 중…';
+  loadFestivals(true);
+  if(S.view==='map') ensureKakao();
+};
+$('#sDemo').onclick=()=>{ $('#settings').classList.remove('on'); loadDemo(); };
+$('#btnRefresh').onclick=()=>{ try{ localStorage.removeItem('fc_cache'); }catch(e){} S.demo ? loadDemo() : loadFestivals(true); };
+
+/* ---------- 탭/필터 ---------- */
+function go(view){
+  S.view=view; document.body.dataset.view=view;
+  document.querySelectorAll('nav.nav button').forEach(x=>x.classList.toggle('on',x.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='view-'+view));
+  if(view==='map'){ ensureKakao(); if(S.kakaoReady){ S.map.relayout(); renderMap(); } }
+  if(view==='nearby') renderNearby();
+  if(view==='calendar') renderCalendar();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('nav.nav button').forEach(b=>b.onclick=()=>go(b.dataset.view));
+['#fPeriod','#fArea'].forEach(s=>$(s).onchange=()=>{ S.selDay=null; renderAll(); });
+$('#fQ').oninput=()=>{ S.selDay=null; renderAll(); };
+function renderAll(){ renderHome(); renderCalendar(); renderMap(); renderNearby(); }
+
+/* ---------- 시작 ---------- */
+(function init(){
+  const fa=$('#fArea'), nc=$('#nearCity');
+  AREAS.forEach(a=>{ fa.insertAdjacentHTML('beforeend',`<option value="${a.code}">${a.name}</option>`); nc.insertAdjacentHTML('beforeend',`<option value="${a.code}">${a.name}</option>`); });
+  renderAll();
+  loadFestivals();
+})();
+</script>
+</body>
+</html>
