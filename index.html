@@ -361,8 +361,17 @@ const CONFIG = Object.assign({
   TOUR_API_KEY: '',      // 공공데이터포털 일반 인증키  → config.js 에 적습니다
   KAKAO_JS_KEY: '',      // 카카오맵 JavaScript 키     → config.js 에 적습니다
   APP_NAME: 'FestivalCalendar',
-  CACHE_HOURS: 6         // 같은 데이터를 몇 시간 동안 재사용할지 (API 호출 절약)
+  CACHE_HOURS: 6,        // 같은 데이터를 몇 시간 동안 재사용할지 (API 호출 절약)
+  CF_ANALYTICS_TOKEN: '' // Cloudflare Web Analytics 토큰 → config.js 에 적습니다 (비우면 통계 안 씀)
 }, window.FESTIVAL_CONFIG || {});
+
+/* ---------- 방문자 통계 (Cloudflare Web Analytics, 쿠키 없음) ---------- */
+if(CONFIG.CF_ANALYTICS_TOKEN && location.protocol!=='file:'){
+  const cf=document.createElement('script'); cf.defer=true;
+  cf.src='https://static.cloudflareinsights.com/beacon.min.js';
+  cf.setAttribute('data-cf-beacon', JSON.stringify({token: CONFIG.CF_ANALYTICS_TOKEN}));
+  document.head.appendChild(cf);
+}
 
 /* ---------- 언어 (ko / en) ---------- */
 const I18N = {
