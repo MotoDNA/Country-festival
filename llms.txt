@@ -1,0 +1,22 @@
+# 축제 달력 (Festival Calendar Korea) — kfestival.site
+
+> 한국관광공사(KTO) 공공데이터 TourAPI의 전국 축제·행사 정보를 달력·지도·내 주변으로 보여주는 무료 웹사이트. 한국어/영어.
+> A free website showing every festival and event in South Korea from the Korea Tourism Organization's open TourAPI data — by calendar, map, and distance from the user. Korean and English.
+
+## 핵심 사실 / Key facts
+- URL: https://kfestival.site/ (Korean) · https://kfestival.site/?lang=en (English)
+- 데이터 출처 / Data source: 한국관광공사 TourAPI 4.0 (searchFestival2, detailCommon2), 공공데이터포털 data.go.kr. 페이지를 열 때마다 실시간 조회 / fetched live on each visit.
+- 제공 항목 / Fields: 축제명, 기간, 주소, 좌표, 사진, 문의 전화, 관광공사 소개글 / name, dates, address, coordinates, photo, contact phone, official description.
+- 기능 / Features: 이번 주말·이번 주·이번 달·진행 중 필터, 시도별 필터, 월별 달력, 카카오맵 지도(마커 클러스터), 내 위치 기준 30/50/100/200km 검색, 카카오맵·Google Maps 길찾기 링크, 한/영 전환.
+- 운영 / Operator: 디엔에이랩스 (DNA Labs), 개인 프로젝트, 무료, 광고·회원가입 없음.
+- 지도 / Map: 카카오맵 (지명은 한국어). Google Maps link provided per festival for international visitors.
+- 지역 구분 / Regions (2026 행정구역): 서울, 경기, 인천, 강원, 대전, 세종, 충북, 충남, 대구, 경북, 부산, 울산, 경남, 전북, 광주·전남, 제주.
+
+## 사용법 / How to use
+- 이번 주말 근처 축제: 내 주변 탭 → 내 위치 찾기 → 기간 '이번 주말'.
+- 여행 계획: 달력 탭 → 월 이동 → 지역 선택 → 날짜 클릭.
+- English: press EN (top right) or open /?lang=en — festival names, addresses and descriptions come from KTO's English dataset.
+
+## 주의 / Caveats
+- 일정은 주최 측 사정으로 변경될 수 있음. 상세 화면의 문의처·공식 홈페이지로 확인 권장.
+- 관광공사에 사진이 없는 행사는 회색 카드로 표시.

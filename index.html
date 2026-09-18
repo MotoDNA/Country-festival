@@ -3,9 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>축제 달력</title>
-<meta name="description" content="이번 주말 어디 갈까? 한국관광공사 TourAPI로 보는 전국 축제 — 달력, 지도, 내 주변 100km">
+<title>축제 달력 — 이번 주말 전국 축제를 달력·지도로 한눈에</title>
+<meta name="description" content="이번 주말 어디 갈까? 한국관광공사 공식 데이터로 매일 갱신되는 전국 축제 일정. 달력·지도·내 주변 100km로 찾아보세요. 영어 지원.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://kfestival.site/">
+<link rel="alternate" hreflang="ko" href="https://kfestival.site/">
+<link rel="alternate" hreflang="en" href="https://kfestival.site/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://kfestival.site/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="축제 달력 · Festival Calendar Korea">
+<meta property="og:title" content="축제 달력 — 이번 주말 전국 축제를 달력·지도로 한눈에">
+<meta property="og:description" content="한국관광공사 공식 데이터로 매일 갱신되는 전국 축제 일정. 달력·지도·내 주변 100km.">
+<meta property="og:url" content="https://kfestival.site/">
+<meta property="og:image" content="https://kfestival.site/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="축제 달력 — 이번 주말 전국 축제를 달력·지도로 한눈에">
+<meta name="twitter:description" content="한국관광공사 공식 데이터로 매일 갱신되는 전국 축제 일정. 달력·지도·내 주변 100km.">
+<meta name="twitter:image" content="https://kfestival.site/og.png">
 <meta name="theme-color" content="#fbfbfd">
+<meta name="apple-mobile-web-app-title" content="축제 달력">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"WebSite","@id":"https://kfestival.site/#website","url":"https://kfestival.site/","name":"축제 달력","alternateName":["Festival Calendar Korea","kfestival"],"description":"한국관광공사 공식 데이터로 매일 갱신되는 전국 축제 일정을 달력·지도·내 주변으로 보여주는 사이트","inLanguage":["ko","en"],"publisher":{"@id":"https://kfestival.site/#org"}},
+ {"@type":"Organization","@id":"https://kfestival.site/#org","name":"디엔에이랩스","url":"https://kfestival.site/"},
+ {"@type":"WebApplication","@id":"https://kfestival.site/#app","name":"축제 달력","url":"https://kfestival.site/","applicationCategory":"TravelApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"inLanguage":["ko","en"],"featureList":["이번 주말 축제","월별 달력","카카오맵 지도","내 주변 100km 검색","영문 모드"],"offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"}},
+ {"@type":"FAQPage","@id":"https://kfestival.site/#faq","mainEntity":[
+  {"@type":"Question","name":"축제 정보는 어디에서 오나요?","acceptedAnswer":{"@type":"Answer","text":"한국관광공사 TourAPI(공공데이터포털)의 축제·공연·행사 데이터를 실시간으로 가져옵니다. 지자체와 관광공사가 등록한 정보이며, 페이지를 열 때마다 최신 데이터를 받아옵니다."}},
+  {"@type":"Question","name":"이번 주말 우리 동네 축제는 어떻게 찾나요?","acceptedAnswer":{"@type":"Answer","text":"내 주변 탭에서 '내 위치 찾기'를 누르거나 도시를 고르면 30~200km 안의 축제를 가까운 순으로 보여줍니다. 기간을 '이번 주말'로 두면 토·일에 열리는 것만 남습니다."}},
+  {"@type":"Question","name":"영어로도 볼 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"네. 오른쪽 위 EN 버튼을 누르거나 https://kfestival.site/?lang=en 으로 열면 한국관광공사 영문 데이터로 축제 이름·주소·소개가 영어로 표시됩니다."}}
+ ]}
+]}
+</script>
 <style>
   :root{
     --bg:#fbfbfd; --surface:#ffffff; --fill:#f5f5f7; --fill2:#e8e8ed;
@@ -26,7 +63,7 @@
   /* ---------- header ---------- */
   header{position:sticky;top:0;z-index:20;background:rgba(251,251,253,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--hair)}
   .top{display:flex;align-items:center;gap:8px;height:52px}
-  .brand{font-weight:600;font-size:17px;letter-spacing:-.3px}
+  .brand{font-weight:600;font-size:17px;letter-spacing:-.3px;margin:0}
   .brand span{color:var(--ink3);font-weight:400;margin-left:6px;font-size:13px}
   .grow{flex:1}
   .ib{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink2)}
@@ -201,13 +238,20 @@
   .toast{position:fixed;left:50%;bottom:calc(var(--nav) + 20px);transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:13.5px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
   .toast.on{opacity:1}
   footer{text-align:center;font-size:12px;color:var(--ink3);padding:8px 0 24px;line-height:1.7}
+  .about{margin:8px auto 28px;padding-top:24px;border-top:1px solid var(--hair);color:var(--ink2);font-size:13.5px;line-height:1.7;max-width:980px}
+  .about h2{font-size:15px;font-weight:600;color:var(--ink);margin:0 0 8px;letter-spacing:-.2px}
+  .about p{margin:0 0 10px}
+  .about b{color:var(--ink);font-weight:600}
+  .faq{margin:14px 0 0;padding:0}
+  .faq dt{font-weight:600;color:var(--ink);margin:10px 0 2px}
+  .faq dd{margin:0}
 </style>
 </head>
 <body data-view="home">
 <header>
   <div class="wrap">
     <div class="top">
-      <div class="brand"><span data-i18n="brand">축제 달력</span><span data-i18n="brandSub">전국</span></div>
+      <h1 class="brand"><span data-i18n="brand">축제 달력</span><span data-i18n="brandSub">전국</span></h1>
       <div class="grow"></div>
       <button class="ib lang" id="btnLang" title="Language">EN</button>
       <button class="ib" id="btnRefresh" title="새로고침"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
@@ -291,6 +335,17 @@
     <div class="grid" id="nearGrid"></div>
   </section>
 </main>
+
+<section class="about wrap" id="about">
+  <h2 data-i18n="aboutTitle">축제 달력은</h2>
+  <p data-i18n-html="aboutP1">한국관광공사가 공공데이터포털(TourAPI)로 공개하는 전국 축제·행사 정보를 <b>달력, 지도, 내 주변</b> 세 가지 방식으로 보여주는 무료 서비스입니다. 페이지를 열 때마다 최신 데이터를 받아오며, 사진·기간·장소·문의처와 관광공사 소개글을 함께 제공합니다.</p>
+  <p data-i18n-html="aboutP2">이번 주말에 갈 곳을 찾을 때는 <b>내 주변</b>에서 위치를 잡고 기간을 <b>이번 주말</b>로 두세요. 여행 계획이라면 <b>달력</b>에서 월을 넘기며 지역을 고르면 됩니다. 외국인 방문객은 오른쪽 위 <b>EN</b>으로 영문 데이터를 볼 수 있습니다.</p>
+  <dl class="faq">
+    <dt data-i18n="faq1q">축제 정보는 얼마나 정확한가요?</dt><dd data-i18n="faq1a">지자체와 한국관광공사가 등록한 공식 정보를 그대로 보여줍니다. 다만 날씨·현장 사정으로 일정이 바뀔 수 있으니 방문 전 상세 화면의 문의처나 공식 홈페이지로 확인하세요.</dd>
+    <dt data-i18n="faq2q">사진이 없는 축제도 있나요?</dt><dd data-i18n="faq2a">관광공사에 사진이 등록되지 않은 행사는 회색 카드로 표시됩니다. 정보 자체는 동일하게 제공됩니다.</dd>
+    <dt data-i18n="faq3q">운영 주체는 누구인가요?</dt><dd data-i18n="faq3a">디엔에이랩스가 만든 개인 프로젝트이며 광고나 회원가입 없이 무료로 제공됩니다. 데이터 출처: 한국관광공사 TourAPI 4.0 · 지도: 카카오맵.</dd>
+  </dl>
+</section>
 
 <footer data-i18n-html="footer">데이터 한국관광공사 TourAPI · 지도 카카오맵<br>축제 정보는 주최 측 사정으로 변경될 수 있습니다.</footer>
 
@@ -396,7 +451,14 @@ const I18N = {
     noGeo:'이 브라우저는 위치 기능을 지원하지 않아요', geoDenied:'위치 권한이 거부됐거나 사용할 수 없어요', curLoc:'현재 위치', fromLoc:(l,k)=>`${l}에서 ${k}`,
     dDates:'기간', dPlace:'장소', dTel:'문의', openKakao:'카카오맵에서 보기', directions:'길찾기', webSearch:'네이버 검색', openGoogle:'Google 지도', share:'공유',
     ovLoading:'소개 불러오는 중…', ovNone:'등록된 소개글이 없어요.', ovFail:'소개글을 불러오지 못했어요.', ovDemo:'샘플 데이터라 소개글이 없어요.', homepage:'공식 홈페이지 ›',
-    copied:'복사했어요', copyFail:'복사에 실패했어요', lang:'ko-KR'
+    copied:'복사했어요', copyFail:'복사에 실패했어요', lang:'ko-KR',
+    metaTitle:'축제 달력 — 이번 주말 전국 축제를 달력·지도로 한눈에', metaDesc:'이번 주말 어디 갈까? 한국관광공사 공식 데이터로 매일 갱신되는 전국 축제 일정. 달력·지도·내 주변 100km로 찾아보세요. 영어 지원.',
+    aboutTitle:'축제 달력은',
+    aboutP1:'한국관광공사가 공공데이터포털(TourAPI)로 공개하는 전국 축제·행사 정보를 <b>달력, 지도, 내 주변</b> 세 가지 방식으로 보여주는 무료 서비스입니다. 페이지를 열 때마다 최신 데이터를 받아오며, 사진·기간·장소·문의처와 관광공사 소개글을 함께 제공합니다.',
+    aboutP2:'이번 주말에 갈 곳을 찾을 때는 <b>내 주변</b>에서 위치를 잡고 기간을 <b>이번 주말</b>로 두세요. 여행 계획이라면 <b>달력</b>에서 월을 넘기며 지역을 고르면 됩니다. 외국인 방문객은 오른쪽 위 <b>EN</b>으로 영문 데이터를 볼 수 있습니다.',
+    faq1q:'축제 정보는 얼마나 정확한가요?', faq1a:'지자체와 한국관광공사가 등록한 공식 정보를 그대로 보여줍니다. 다만 날씨·현장 사정으로 일정이 바뀔 수 있으니 방문 전 상세 화면의 문의처나 공식 홈페이지로 확인하세요.',
+    faq2q:'사진이 없는 축제도 있나요?', faq2a:'관광공사에 사진이 등록되지 않은 행사는 회색 카드로 표시됩니다. 정보 자체는 동일하게 제공됩니다.',
+    faq3q:'운영 주체는 누구인가요?', faq3a:'디엔에이랩스가 만든 개인 프로젝트이며 광고나 회원가입 없이 무료로 제공됩니다. 데이터 출처: 한국관광공사 TourAPI 4.0 · 지도: 카카오맵.'
   },
   en: {
     brand:'Festival Calendar', brandSub:'Korea', langBtn:'한국어',
@@ -419,7 +481,14 @@ const I18N = {
     noGeo:'This browser does not support location', geoDenied:'Location permission denied or unavailable', curLoc:'current location', fromLoc:(l,k)=>`${k} from ${l}`,
     dDates:'Dates', dPlace:'Place', dTel:'Contact', openKakao:'Open in Kakao Map', directions:'Directions', webSearch:'Search on Google', openGoogle:'Google Maps', share:'Share',
     ovLoading:'Loading description…', ovNone:'No description available.', ovFail:'Could not load the description.', ovDemo:'Sample data — no description.', homepage:'Official website ›',
-    copied:'Copied', copyFail:'Copy failed', lang:'en-US'
+    copied:'Copied', copyFail:'Copy failed', lang:'en-US',
+    metaTitle:'Festival Calendar Korea — every festival in Korea, on a calendar and a map', metaDesc:'What is on this weekend in Korea? Official Korea Tourism Organization data, updated daily. Browse by calendar, map, or festivals within 100 km of you.',
+    aboutTitle:'About Festival Calendar',
+    aboutP1:'A free service that shows every festival and event published by the Korea Tourism Organization (TourAPI open data) in three ways: <b>calendar, map, and nearby</b>. Data is fetched live each time you open the page, with photos, dates, venue, contact and the official description.',
+    aboutP2:'Looking for something this weekend? Open <b>Nearby</b>, set your location and choose <b>This weekend</b>. Planning a trip? Use the <b>Calendar</b>, move between months and pick a region. Map labels are in Korean (Kakao Map); use the <b>Google Maps</b> button on any festival for directions.',
+    faq1q:'How accurate is the information?', faq1a:'It is the official listing registered by local governments and the Korea Tourism Organization. Schedules can still change with weather or local circumstances, so check the contact or official website on the detail screen before you go.',
+    faq2q:'Why do some festivals have no photo?', faq2a:'Events without a photo in the KTO database show a grey card. All other details are the same.',
+    faq3q:'Who runs this site?', faq3a:'An independent project by DNA Labs, free with no ads or sign-up. Data: Korea Tourism Organization TourAPI 4.0 · Map: Kakao Map.'
   }
 };
 const MONTHS_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], DOW_EN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -437,7 +506,12 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=T()[el.dataset.i18nPh]||''; });
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML=T()[el.dataset.i18nHtml]||''; });
   $('#btnLang').textContent=T().langBtn;
-  document.title=T().brand;
+  document.title=T().metaTitle;
+  const setMeta=(sel,v)=>{ const m=document.querySelector(sel); if(m) m.setAttribute('content',v); };
+  setMeta('meta[name="description"]',T().metaDesc); setMeta('meta[property="og:title"]',T().metaTitle); setMeta('meta[property="og:description"]',T().metaDesc);
+  setMeta('meta[name="twitter:title"]',T().metaTitle); setMeta('meta[name="twitter:description"]',T().metaDesc);
+  setMeta('meta[property="og:url"]', LANG==='en'?'https://kfestival.site/?lang=en':'https://kfestival.site/');
+  const can=document.querySelector('link[rel="canonical"]'); if(can) can.href = LANG==='en'?'https://kfestival.site/?lang=en':'https://kfestival.site/';
   // 지역 이름
   document.querySelectorAll('#fArea option, #nearCity option').forEach(o=>{ const a=AREAS.find(x=>x.code===o.value); if(a) o.textContent=areaName(a.code); });
 }
@@ -561,7 +635,7 @@ async function loadFestivals(force=false){
       if(c && Date.now()-c.at < CONFIG.CACHE_HOURS*3600e3 && c.from===ymd(startOfMonth(today()))){
         S.list=c.items; S.demo=false; hideBanner();
         setStatus(T().count(S.list.length), `${new Date(c.at).toLocaleTimeString(T().lang,{hour:'2-digit',minute:'2-digit'})} ${T().basis} · ${T().asOf} ${latestMod()}`);
-        renderAll(); return;
+        renderAll(); injectEventLd(); return;
       }
     }catch(e){}
   }
@@ -597,7 +671,24 @@ async function loadFestivals(force=false){
   S.demo=false; hideBanner();
   try{ localStorage.setItem('fc_cache_v2_'+LANG, JSON.stringify({at:Date.now(), from, items:S.list})); }catch(e){}
   setStatus(T().count(S.list.length), `${T().justUpdated} · ${T().asOf} ${latestMod()}`);
-  renderAll();
+  renderAll(); injectEventLd();
+}
+/* 검색엔진/AI용 구조화 데이터: 다가오는 축제 60개를 Event 목록으로 */
+function injectEventLd(){
+  try{
+    const t=ymd(today()); const iso=s=>`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+    const list=S.list.filter(f=>f.end>=t && f.title).sort((a,b)=>a.start.localeCompare(b.start)).slice(0,60);
+    const ld={"@context":"https://schema.org","@type":"ItemList","name":LANG==='en'?'Upcoming festivals in Korea':'다가오는 전국 축제',"numberOfItems":list.length,
+      "itemListElement":list.map((f,i)=>({"@type":"ListItem","position":i+1,"item":{
+        "@type":"Festival","name":f.title,"startDate":iso(f.start),"endDate":iso(f.end),
+        "eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
+        "image":f.img||undefined,
+        "location":{"@type":"Place","name":f.addr||areaName(f.area),"address":f.addr||areaName(f.area),...(f.lat&&f.lng?{"geo":{"@type":"GeoCoordinates","latitude":f.lat,"longitude":f.lng}}:{})},
+        "url":`https://kfestival.site/${LANG==='en'?'?lang=en':''}#f${f.id}`
+      }}))};
+    let el=document.getElementById('eventLd'); if(!el){ el=document.createElement('script'); el.id='eventLd'; el.type='application/ld+json'; document.head.appendChild(el); }
+    el.textContent=JSON.stringify(ld);
+  }catch(e){}
 }
 function latestMod(){ const m=S.list.reduce((a,f)=>f.mod>a?f.mod:a,''); return m?fmtDate(m):'-'; }
 function explainXml(txt){
